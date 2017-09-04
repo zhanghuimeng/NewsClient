@@ -12,9 +12,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnItemClickListener
+{
+    private static String result = "傳入包含Json數據的網頁URL";
+    private Context mContext;
+    private TextView textView;
+    NewsUtils newsUtils;
+    List<NewsBriefBean> listNewsBean;
+    ListView listview;
+    private Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            listNewsBean = (List<NewsBean>) msg.obj;
+            NewsAdapter newsAdapter = new NewsAdapter(MainActivity.this, listNewsBean);
+            listview.setAdapter(newsAdapter);
+
+        };
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
