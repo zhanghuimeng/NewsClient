@@ -1,5 +1,8 @@
 package com.java.no_36;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,26 +17,38 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView.OnItemClickListener;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnItemClickListener
 {
-    private static String result = "傳入包含Json數據的網頁URL";
     private Context mContext;
     private TextView textView;
-    NewsUtils newsUtils;
-    List<NewsBriefBean> listNewsBean;
+    NewsBriefUtils newsBriefUtils;
+    List<NewsBriefBean> listNewsBriefBean;
     ListView listview;
-    private Handler mHandler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            listNewsBean = (List<NewsBean>) msg.obj;
-            NewsAdapter newsAdapter = new NewsAdapter(MainActivity.this, listNewsBean);
+    private Handler mHandler = new Handler()
+    {
+        public void handleMessage(android.os.Message msg)
+        {
+            listNewsBriefBean = (List<NewsBriefBean>) msg.obj;
+            NewsBriefAdapter newsAdapter = new NewsBriefAdapter(MainActivity.this, listNewsBriefBean);
             listview.setAdapter(newsAdapter);
 
         };
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        // auto-gen start
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -56,6 +71,44 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        // auto-gen end
+
+        mContext = MainActivity.this;
+        listview = (ListView) findViewById(R.id.list_news_brief);
+        newsBriefUtils = new NewsBriefUtils();
+        NewsBriefDBUtils newsDatabase = new NewsBriefDBUtils(mContext);
+
+        // 1.先去数据库中获取缓存的新闻数据展示到listview
+        ArrayList<NewsBriefBean> allnews_database = NewsBriefUtils.getDBNews(mContext);
+
+        if (allnews_database != null && allnews_database.size() > 0)
+        {
+            // 创建一个adapter设置给listview
+            NewsBriefAdapter newsAdapter = new NewsBriefAdapter(mContext, allnews_database);
+            listview.setAdapter(newsAdapter);
+        }
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run()
+            {
+                // 从网络中调取数据
+                listNewsBriefBean = newsBriefUtils.getNetNewsBrief(mContext, 1, 20);
+                Message message = Message.obtain();
+                message.obj = listNewsBriefBean;
+                mHandler.sendMessage(message);
+            }
+        }).start();
+
+        listview.setOnItemClickListener(this);
+    }
+
+    // 当List被点击的时候
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(this, NEWS_PAGE.class);
+        startActivity(intent);
     }
 
     @Override
@@ -71,7 +124,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.search_bar, menu);
         return true;
     }
 
@@ -83,10 +136,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+       /* if (id == R.id.action_search) {
             return true;
         }
-
+        */
         return super.onOptionsItemSelected(item);
     }
 
@@ -96,17 +149,15 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_collect) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_night) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_classify) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_text) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_shield) {
 
         }
 

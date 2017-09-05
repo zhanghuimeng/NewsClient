@@ -35,6 +35,16 @@ public class NewsBriefBean
     String getLang_type() { return lang_type; }
 
     void setNews_class_tag(int news_class_tag) { this.news_class_tag = news_class_tag; }
+    void setNews_class_tag(String tag)
+    {
+        for (int i = 1; i <= 12; i++)
+            if (NEWS_CLASS_TO_STRING[i].equals(tag))
+            {
+                news_class_tag = i;
+                return;
+            }
+        news_class_tag = 0;
+    }
     int getNews_class_tag() { return news_class_tag; }
 
     void setNews_author(String news_author) { this.news_author = news_author; }
