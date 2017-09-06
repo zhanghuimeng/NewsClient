@@ -14,13 +14,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import cn.sharesdk.onekeyshare.OnekeyShare;
 
 public class NewsPage extends AppCompatActivity {
 
+    Intent mintent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_page);
+        this.mintent = getIntent();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -43,14 +46,14 @@ public class NewsPage extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.Share:
-                Toast.makeText(this,"you clicked Share",Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(this,"you clicked Share",Toast.LENGTH_SHORT).show();
 
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
                 sendIntent.setType("text/plain");
-                startActivity(sendIntent);
-
+                startActivity(sendIntent);*/
+                showShare();
                 break;
             case R.id.Collect:
                 Toast.makeText(this,"you clicked Collect",Toast.LENGTH_SHORT).show();
@@ -62,4 +65,16 @@ public class NewsPage extends AppCompatActivity {
         return true;
     }
 
+    private void showShare() {
+        OnekeyShare oks = new OnekeyShare();
+        Bundle bundle = mintent.getExtras();
+        oks.disableSSOWhenAuthorize();
+        oks.setTitle(bundle.getString("title"));
+        oks.setTitleUrl(mintent.getDataString());
+        oks.setText(bundle.getString("brief"));
+        oks.setImageUrl(bundle.getString("image"));
+        oks.setUrl(mintent.getDataString());
+        oks.setComment("我是测试评论文本");
+        oks.show(this);
+    }
 }

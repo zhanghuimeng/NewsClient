@@ -83,7 +83,13 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         startActivity(intent);*/
+        NewsBriefBean news = (NewsBriefBean) adapterView.getItemAtPosition(position);
+        String url = news.getNews_url();
         Intent intent = new Intent(getActivity(), NewsPage.class);
+        intent.setData(Uri.parse(url));
+        intent.putExtra("title", news.getNews_title());
+        intent.putExtra("brief", news.getNews_intro());
+        intent.putExtra("image", news.getNews_pictures()[0]);
         startActivity(intent);
     }
 
