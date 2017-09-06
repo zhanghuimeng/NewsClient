@@ -3,6 +3,8 @@ package com.java.no_36;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +20,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.app.Fragment;
+
+
 
 
 public class MainActivity extends AppCompatActivity
@@ -105,8 +109,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_night) {
 
         } else if (id == R.id.nav_classify) {
-
-        } else if (id == R.id.nav_text) {
+            //AlertDialog ad = new ClassifyDialogBuilder(MainActivity.this).create();
+            //ad.show();
+            ClassifyDialog classifydialog = new ClassifyDialog(MainActivity.this);
+            classifydialog.createmydialog();
+    } else if (id == R.id.nav_text) {
 
         } else if (id == R.id.nav_shield) {
 
@@ -149,4 +156,6 @@ public class MainActivity extends AppCompatActivity
         //将TabLayout和ViewPager关联起来。
         mTabLayout.setupWithViewPager(mViewPager);
     }
+
+
 }
