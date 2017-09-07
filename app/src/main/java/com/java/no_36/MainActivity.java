@@ -6,6 +6,7 @@ import java.util.List;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -110,14 +111,26 @@ public class MainActivity extends AppCompatActivity
 
     // 当List被点击的时候
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+    {
+        /* 以下部分打开一个网页浏览新的新闻界面
         NewsBriefBean news = (NewsBriefBean) parent.getItemAtPosition(position);
         String url = news.getNews_url();
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         startActivity(intent);
+        */
 
+        // 写了一个简单的新闻详情界面
+        NewsBriefBean news = (NewsBriefBean) parent.getItemAtPosition(position);
+        Bundle bundle = new Bundle();
+        bundle.putString("id", news.getNews_id());
+        Intent intent = new Intent();
+        intent.putExtras(bundle);
+        intent.setClass(MainActivity.this, NewsDetailActivity.class);
+        Log.i("MainActivity", news.getNews_id());
+        startActivity(intent);
     }
 
     @Override
