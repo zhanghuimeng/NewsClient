@@ -5,7 +5,7 @@
     android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal" >
 
-    <com.java.no_36.NetworkImageView
+    <com.java.no_36.GlideImageView
         android:id="@+id/item_img_icon"
         android:layout_width="68dp"
         android:layout_height="68dp"

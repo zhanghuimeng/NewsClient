@@ -21,10 +21,10 @@ public class NewsDetailActivity extends AppCompatActivity
         {
             NewsBean bean = (NewsBean) msg.obj;
 
-            NetworkImageView iv = (NetworkImageView) findViewById(R.id.detail_image);
+            GlideImageView iv = (GlideImageView) findViewById(R.id.detail_image);
             String[] news_pictures = bean.getNews_pictures();
             if (news_pictures != null && news_pictures.length > 0)
-                iv.setImageUrl(news_pictures[0]);
+                iv.setImage_url(news_pictures[0]);
 
             TextView title = (TextView) findViewById(R.id.detail_title);
             title.setText(bean.getNews_title());
