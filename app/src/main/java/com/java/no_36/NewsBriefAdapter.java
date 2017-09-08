@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class NewsBriefAdapter extends BaseAdapter
         {
             convertView = mLayoutInflater.inflate(R.layout.news_brief_item, null);
             viewHolder = new ViewHolder();
-            viewHolder.item_img_icon = (NetworkImageView) convertView.findViewById(R.id.item_img_icon);;
+            viewHolder.item_img_icon = (GlideImageView) convertView.findViewById(R.id.item_img_icon);;
             viewHolder.item_tv_des = (TextView) convertView.findViewById(R.id.item_tv_des);
             viewHolder.item_tv_title = (TextView) convertView.findViewById(R.id.item_tv_title);
             viewHolder.item_tv_source = (TextView) convertView.findViewById(R.id.item_tv_source);
@@ -67,9 +67,9 @@ public class NewsBriefAdapter extends BaseAdapter
         }
         NewsBriefBean bean= mDatas.get(position);
         if (bean.getNews_pictures().length > 0)
-            viewHolder.item_img_icon.setImageUrl(bean.getNews_pictures()[0]);
+            viewHolder.item_img_icon.setImage_url(bean.getNews_pictures()[0]);
         else
-            viewHolder.item_img_icon.setImageUrl("");
+            viewHolder.item_img_icon.setImage_url("");
         viewHolder.item_tv_des.setText(bean.getNews_intro());
         viewHolder.item_tv_title.setText(bean.getNews_title());
         viewHolder.item_tv_source.setText(bean.getNews_source());
@@ -81,7 +81,7 @@ public class NewsBriefAdapter extends BaseAdapter
 
 }
 class ViewHolder{
-    NetworkImageView item_img_icon;
+    GlideImageView item_img_icon;
     TextView item_tv_des;
     TextView item_tv_title;
     TextView item_tv_source;

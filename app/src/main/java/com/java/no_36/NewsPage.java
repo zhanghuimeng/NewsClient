@@ -13,12 +13,37 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import cn.sharesdk.onekeyshare.OnekeyShare;
+import android.os.Handler;
+import android.content.Context;
+import android.os.Message;
 
 public class NewsPage extends AppCompatActivity {
 
     Intent mintent;
+    private Handler mHandler = new Handler()
+    {
+        public void handleMessage(android.os.Message msg)
+        {
+            NewsBean bean = (NewsBean) msg.obj;
+
+            GlideImageView iv = (GlideImageView) findViewById(R.id.detail_image);
+            String[] news_pictures = bean.getNews_pictures();
+            if (news_pictures != null && news_pictures.length > 0)
+                iv.setImage_url(news_pictures[0]);
+
+            TextView title = (TextView) findViewById(R.id.detail_title);
+            title.setText(bean.getNews_title());
+
+            TextView content = (TextView) findViewById(R.id.detail_content);
+            String text = bean.getNews_content();
+            text = text.replaceAll("  ", "\n");
+            content.setText(text);
+        };
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +60,20 @@ public class NewsPage extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        Bundle bundle = mintent.getExtras();
+        final String id = bundle.getString("id");
+        final Context context = this;
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                NewsBean bean = NewsUtils.getNetNews(context, id);
+                Message message = Message.obtain();
+                message.obj = bean;
+                mHandler.sendMessage(message);
+            }
+        }).start();
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

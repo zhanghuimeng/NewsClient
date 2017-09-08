@@ -107,11 +107,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_night) {
 
         } else if (id == R.id.nav_classify) {
-            //AlertDialog ad = new ClassifyDialogBuilder(MainActivity.this).create();
-            //ad.show();
             ClassifyDialog classifydialog = new ClassifyDialog(MainActivity.this);
             classifydialog.createmydialog();
-    } else if (id == R.id.nav_text) {
+        } else if (id == R.id.nav_text) {
 
         } else if (id == R.id.nav_shield) {
 

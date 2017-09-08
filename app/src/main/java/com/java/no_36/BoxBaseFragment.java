@@ -87,6 +87,7 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
         String url = news.getNews_url();
         Intent intent = new Intent(getActivity(), NewsPage.class);
         intent.setData(Uri.parse(url));
+        intent.putExtra("id", news.getNews_id());
         intent.putExtra("title", news.getNews_title());
         intent.putExtra("brief", news.getNews_intro());
         intent.putExtra("image", news.getNews_pictures()[0]);

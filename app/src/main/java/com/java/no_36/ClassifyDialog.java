@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class ClassifyDialog {
     Context mcontext;
@@ -17,10 +19,18 @@ public class ClassifyDialog {
     /**
      * 从数据库获取当前选择的内容
      */
-    private boolean[] areaState=new boolean[]{false, false, false, false, false,false, false, false, false, false, false,false };
+    SharedPreferences mSharedPreferences;
+    SharedPreferences.Editor mEditor;
+    private boolean[] areaState=new boolean[12]; //{false, false, false, false, false,false, false, false, false, false, false,false };
 
     public ClassifyDialog(Context context) {
         mcontext = context;
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
+        mEditor = mSharedPreferences.edit();
+        for(int i = 0; i < 12; i++) {
+            String tmp = "class" + areas[i];
+            areaState[i] = mSharedPreferences.getBoolean(tmp, false);
+        }
     }
     public void createmydialog() {
         AlertDialog ad = new AlertDialog.Builder(mcontext)
@@ -35,10 +45,13 @@ public class ClassifyDialog {
                         for (int i = 0; i < areas.length; i++){
                             if (areaCheckListView.getCheckedItemPositions().get(i)){
                                 s += i + ":"+ areaCheckListView.getAdapter().getItem(i)+ "  ";
+                                mEditor.putBoolean("class" + areas[i], true);
                             }else{
                                 areaCheckListView.getCheckedItemPositions().get(i,false);
+                                mEditor.putBoolean("class" + areas[i], false);
                             }
                         }
+                        mEditor.commit();
                         if (areaCheckListView.getCheckedItemPositions().size() > 0){
                             Toast.makeText(mcontext, s, Toast.LENGTH_LONG).show();
                         }else{

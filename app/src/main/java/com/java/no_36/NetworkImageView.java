@@ -61,7 +61,7 @@ public class NetworkImageView extends ImageView {
                     e.printStackTrace();
                 }
             }
-        }).start();;
+        }).start();
 
     }
 
