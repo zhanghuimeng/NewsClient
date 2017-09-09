@@ -1,5 +1,9 @@
 package com.java.no_36;
 
+/**
+ * Created by lwt on 17-9-8.
+ */
+
 import java.util.List;
 
 import android.content.Context;
@@ -9,22 +13,15 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
-import com.java.no_36.asimplecache.ACache;
 
-import java.util.List;
+public class NewsHistoryAdapter extends BaseAdapter {
 
-/**
- * ListView的Adapter
- *
- */
-public class NewsBriefAdapter extends BaseAdapter
-{
     private LayoutInflater mLayoutInflater;
     private List<NewsBriefBean> mDatas;
     private Context mContext;
 
     // 用构造器获取传递过来的数据
-    public NewsBriefAdapter(Context context, List<NewsBriefBean> listNewsBean)
+    public NewsHistoryAdapter(Context context, List<NewsBriefBean> listNewsBean)
     {
         this.mLayoutInflater = LayoutInflater.from(context);
         this.mDatas = listNewsBean;
@@ -50,34 +47,22 @@ public class NewsBriefAdapter extends BaseAdapter
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
-    {
+    public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-        NewsBriefBean bean= mDatas.get(position);
-        int isread = bean.getNews_isread();
-        if (isread == 1)
-        {
-            convertView = mLayoutInflater.inflate(R.layout.news_read_brief, null);
-            viewHolder = new ViewHolder();
-            viewHolder.item_img_icon = (GlideImageView) convertView.findViewById(R.id.item_img_icon);;
-            viewHolder.item_tv_des = (TextView) convertView.findViewById(R.id.item_tv_des);
-            viewHolder.item_tv_title = (TextView) convertView.findViewById(R.id.item_tv_title);
-            viewHolder.item_tv_source = (TextView) convertView.findViewById(R.id.item_tv_source);
-            viewHolder.item_tv_type = (TextView) convertView.findViewById(R.id.item_tv_type);
-            convertView.setTag(viewHolder);
-        }
-        else
-        {
+        if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.news_brief_item, null);
             viewHolder = new ViewHolder();
-            viewHolder.item_img_icon = (GlideImageView) convertView.findViewById(R.id.item_img_icon);;
+            viewHolder.item_img_icon = (GlideImageView) convertView.findViewById(R.id.item_img_icon);
+            ;
             viewHolder.item_tv_des = (TextView) convertView.findViewById(R.id.item_tv_des);
             viewHolder.item_tv_title = (TextView) convertView.findViewById(R.id.item_tv_title);
             viewHolder.item_tv_source = (TextView) convertView.findViewById(R.id.item_tv_source);
             viewHolder.item_tv_type = (TextView) convertView.findViewById(R.id.item_tv_type);
             convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
-
+        NewsBriefBean bean = mDatas.get(position);
         if (bean.getNews_pictures().length > 0)
             viewHolder.item_img_icon.setImage_url(bean.getNews_pictures()[0]);
         else
@@ -89,13 +74,5 @@ public class NewsBriefAdapter extends BaseAdapter
         return convertView;
     }
 
-
-
 }
-class ViewHolder{
-    GlideImageView item_img_icon;
-    TextView item_tv_des;
-    TextView item_tv_title;
-    TextView item_tv_source;
-    TextView item_tv_type;
-}
+

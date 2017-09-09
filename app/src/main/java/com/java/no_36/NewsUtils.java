@@ -51,6 +51,11 @@ public class NewsUtils
                     String result = StreamUtils.convertStream(is);
                     json = new JSONObject(result);
                     mCache.put(news_id, json, SAVE_TIME); // 存入缓存中
+                    String defid = "zhmlwtwsy36";
+                    String tmp = mCache.getAsString(defid);
+                    if(tmp == null) tmp = "";
+                    tmp = news_id + " " + tmp;
+                    mCache.put(news_id, tmp);
                     is.close();
                 }
 

@@ -32,10 +32,10 @@ public class NewsBriefDBUtils
         {
             ContentValues value = new ContentValues();
 
+            value.put("news_id", bean.getNews_id());
             value.put("lang_type", bean.getLang_type());
             value.put("news_class_tag", bean.getNews_class_tag());
             value.put("news_author", bean.getNews_author());
-            value.put("news_id", bean.getNews_id());
             value.put("news_pictures", joinObject(bean.getNews_pictures(), DELIMITER));
             value.put("news_source", bean.getNews_source());
             value.put("news_time", bean.getNews_time().getTime());
@@ -43,7 +43,7 @@ public class NewsBriefDBUtils
             value.put("news_url", bean.getNews_url());
             value.put("news_video", joinObject(bean.getNews_video(), DELIMITER));
             value.put("news_intro", bean.getNews_intro());
-
+            value.put("news_isread", bean.getNews_isread());
             sqLite.insert(NewsBriefDBHelper.TABLE_NAME, null, value);
         }
         sqLite.close();
@@ -70,10 +70,10 @@ public class NewsBriefDBUtils
             while (cursor.moveToNext())
             {
                 NewsBriefBean bean = new NewsBriefBean();
-                bean.setLang_type(cursor.getString(0));
-                bean.setNews_class_tag(cursor.getInt(1));
-                bean.setNews_author(cursor.getString(2));
-                bean.setNews_id(cursor.getString(3));
+                bean.setNews_id(cursor.getString(0));
+                bean.setLang_type(cursor.getString(1));
+                bean.setNews_class_tag(cursor.getInt(2));
+                bean.setNews_author(cursor.getString(3));
                 bean.setNews_pictures(cursor.getString(4).split(DELIMITER));
                 bean.setNews_source(cursor.getString(5));
                 bean.setNews_time(new Date(cursor.getLong(6)));
@@ -81,6 +81,61 @@ public class NewsBriefDBUtils
                 bean.setNews_url(cursor.getString(8));
                 bean.setNews_video(cursor.getString(9).split(DELIMITER));
                 bean.setNews_intro(cursor.getString(10));
+                bean.setNews_isread(cursor.getInt(11));
+                arrayList.add(bean);
+            }
+        }
+        cursor.close();
+
+        return arrayList;
+    }
+
+    /*
+    public boolean getIsVisited(String id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] columns = new String[]{"news_isvisited"};
+        String selection = "news_id=?";
+        String[] selectionArgs = new String[]{id};
+        Cursor cursor = db.query(NewsBriefDBHelper.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+        int res = cursor.getInt(0);
+        if(res == 0)
+            return false;
+        else
+            return true;
+    }
+    */
+
+    public void update_isvisit(String id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("news_isread", 1);
+        String[] args = {String.valueOf(id)};
+        db.update(NewsBriefDBHelper.TABLE_NAME, values, "news_id=?", args);
+    }
+
+    public ArrayList<NewsBriefBean> getHistory() {
+        ArrayList<NewsBriefBean> arrayList = new ArrayList<NewsBriefBean>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String selection = "news_isread=?";
+        String[] selectionArgs = new String[]{"1"};
+        Cursor cursor = db.query(NewsBriefDBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        if (cursor != null && cursor.getCount() > 0)
+        {
+            while (cursor.moveToNext())
+            {
+                NewsBriefBean bean = new NewsBriefBean();
+                bean.setNews_id(cursor.getString(0));
+                bean.setLang_type(cursor.getString(1));
+                bean.setNews_class_tag(cursor.getInt(2));
+                bean.setNews_author(cursor.getString(3));
+                bean.setNews_pictures(cursor.getString(4).split(DELIMITER));
+                bean.setNews_source(cursor.getString(5));
+                bean.setNews_time(new Date(cursor.getLong(6)));
+                bean.setNews_title(cursor.getString(7));
+                bean.setNews_url(cursor.getString(8));
+                bean.setNews_video(cursor.getString(9).split(DELIMITER));
+                bean.setNews_intro(cursor.getString(10));
+                bean.setNews_isread(cursor.getInt(11));
                 arrayList.add(bean);
             }
         }
@@ -119,4 +174,6 @@ public class NewsBriefDBUtils
         }
         return urls;
     }
+
+
 }

@@ -30,6 +30,7 @@ public class NewsBriefBean
     private String news_url;
     private String[] news_video;
     private String news_intro;
+    private int news_isread;
 
     void setLang_type(String lang_type) { this.lang_type = lang_type; }
     String getLang_type() { return lang_type; }
@@ -73,4 +74,7 @@ public class NewsBriefBean
 
     void setNews_intro(String news_intro) { this.news_intro = news_intro; }
     String getNews_intro() { return news_intro; }
+
+    void setNews_isread(int news_isread) { this.news_isread = news_isread; }
+    int getNews_isread() { return news_isread; }
 }

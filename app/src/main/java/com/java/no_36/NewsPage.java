@@ -20,9 +20,28 @@ import android.os.Handler;
 import android.content.Context;
 import android.os.Message;
 
-public class NewsPage extends AppCompatActivity {
+import com.iflytek.cloud.ErrorCode;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechSynthesizer;
+import com.iflytek.cloud.SpeechUtility;
+import com.iflytek.cloud.SynthesizerListener;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+
+public class NewsPage extends AppCompatActivity implements OnClickListener {
 
     Intent mintent;
+    private String text;
+    private SpeechSynthesizer mySynthesizer;
+    private Button tts_Button;
     private Handler mHandler = new Handler()
     {
         public void handleMessage(android.os.Message msg)
@@ -38,10 +57,16 @@ public class NewsPage extends AppCompatActivity {
             title.setText(bean.getNews_title());
 
             TextView content = (TextView) findViewById(R.id.detail_content);
-            String text = bean.getNews_content();
-            text = text.replaceAll("  ", "\n");
+            text = bean.getNews_content().replaceAll("  ", "\n");
             content.setText(text);
         };
+    };
+
+    private InitListener myInitListener = new InitListener() {
+        @Override
+        public void onInit(int code) {
+            Log.d("mySynthesiezer:", "InitListener init() code = " + code);
+        }
     };
 
     @Override
@@ -52,18 +77,18 @@ public class NewsPage extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        tts_Button = (Button) findViewById(R.id.fab);
+        tts_Button.setOnClickListener(this);
+
         Bundle bundle = mintent.getExtras();
         final String id = bundle.getString("id");
         final Context context = this;
+        SpeechUtility.createUtility(NewsPage.this, "appid=59b23e6b,force_login=true");
+        //处理语音合成关键类
+        mySynthesizer = SpeechSynthesizer.createSynthesizer(this, myInitListener);
 
+        NewsBriefDBUtils newsBriefDBUtils = new NewsBriefDBUtils(this);
+        newsBriefDBUtils.update_isvisit(id);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -85,13 +110,6 @@ public class NewsPage extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.Share:
-                /*Toast.makeText(this,"you clicked Share",Toast.LENGTH_SHORT).show();
-
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-                sendIntent.setType("text/plain");
-                startActivity(sendIntent);*/
                 showShare();
                 break;
             case R.id.Collect:
@@ -115,5 +133,57 @@ public class NewsPage extends AppCompatActivity {
         oks.setUrl(mintent.getDataString());
         oks.setComment("我是测试评论文本");
         oks.show(this);
+    }
+
+    private SynthesizerListener mTtsListener = new SynthesizerListener() {
+        @Override
+        public void onSpeakBegin() {
+        }
+        @Override
+        public void onSpeakPaused() {
+        }
+        @Override
+        public void onSpeakResumed() {
+        }
+        @Override
+        public void onBufferProgress(int percent, int beginPos, int endPos,
+                                     String info) {
+        }
+        @Override
+        public void onSpeakProgress(int percent, int beginPos, int endPos) {
+        }
+
+        @Override
+        public void onCompleted(SpeechError error) {
+            if(error!=null)
+            {
+                Log.d("complete code:", error.getErrorCode()+"");
+            }
+            else
+            {
+                Log.d("complete code:", "0");
+            }
+        }
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+
+        }
+    };
+
+    public void onClick(View v) {
+        // TODO Auto-generated method stub
+        switch (v.getId()){
+            case R.id.fab:
+                //设置发音人
+                mySynthesizer.setParameter(SpeechConstant.VOICE_NAME,"xiaoyan");
+                //设置音调
+                mySynthesizer.setParameter(SpeechConstant.PITCH,"50");
+                //设置音量
+                mySynthesizer.setParameter(SpeechConstant.VOLUME,"50");
+                int code = mySynthesizer.startSpeaking(text, mTtsListener);
+                Log.d("start code:", code+"");
+                break;
+            default:
+                break;
+        }
     }
 }

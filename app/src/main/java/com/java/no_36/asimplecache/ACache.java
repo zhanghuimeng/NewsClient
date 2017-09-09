@@ -166,6 +166,19 @@ public class ACache {
         }
     }
 
+
+    /**
+     *  write by lwt
+     *  判断是否存在某个id
+     */
+   public boolean ishasKey(String key) {
+       File file = mCache.get(key);
+       if (!file.exists())
+           return false;
+       else
+           return true;
+   }
+
     // =======================================
     // ============= JSONObject 数据 读写 ==============
     // =======================================

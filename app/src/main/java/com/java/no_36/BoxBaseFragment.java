@@ -57,19 +57,19 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
             NewsBriefAdapter newsAdapter = new NewsBriefAdapter(mContext, allnews_database);
             mlistview.setAdapter(newsAdapter);
         }
+        else {
+            new Thread(new Runnable() {
 
-        new Thread(new Runnable() {
-
-            @Override
-            public void run()
-            {
-                // 从网络中调取数据
-                listNewsBriefBean = newsBriefUtils.getNetNewsBrief(mContext, 1, 20);
-                Message message = Message.obtain();
-                message.obj = listNewsBriefBean;
-                mHandler.sendMessage(message);
-            }
-        }).start();
+                @Override
+                public void run() {
+                    // 从网络中调取数据
+                    listNewsBriefBean = newsBriefUtils.getNetNewsBrief(mContext, 1, 20);
+                    Message message = Message.obtain();
+                    message.obj = listNewsBriefBean;
+                    mHandler.sendMessage(message);
+                }
+            }).start();
+        }
 
         mlistview.setOnItemClickListener(this);
         return mlistview;
@@ -90,7 +90,8 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
         intent.putExtra("id", news.getNews_id());
         intent.putExtra("title", news.getNews_title());
         intent.putExtra("brief", news.getNews_intro());
-        intent.putExtra("image", news.getNews_pictures()[0]);
+        if(news.getNews_pictures().length > 0)
+            intent.putExtra("image", news.getNews_pictures()[0]);
         startActivity(intent);
     }
 

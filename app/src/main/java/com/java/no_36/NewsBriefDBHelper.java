@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 public class NewsBriefDBHelper extends SQLiteOpenHelper
 {
     public static final String TABLE_NAME = "news_brief";
+    public static final String COLLECT_TABLE_NAME = "news_collect";
 
     public NewsBriefDBHelper(Context context) {
         super(context, "NewsBrief", null, 1);
@@ -25,19 +26,27 @@ public class NewsBriefDBHelper extends SQLiteOpenHelper
 
         String sql =
             "CREATE TABLE news_brief(" +
+                    "news_id         VARCHAR(200) primary key," +
                 "lang_type       VARCHAR(50)," +
                 "news_class_tag  INTEGER," +
                 "news_author     VARCHAR(100)," +
-                "news_id         VARCHAR(200)," +
                 "news_pictures   VARCHAR(4000)," +
                 "news_source     VARCHAR(200)," +
                 "news_time       DATETIME," +
                 "news_title      VARCHAR(1000)," +
                 "news_url        VARCHAR(200)," +
                 "news_video      VARCHAR(4000)," +
-                "news_intro      VARCHAR(4000)" +
+                "news_intro      VARCHAR(4000)," +
+                "news_isread     INTEGER" +
             ");";
         db.execSQL(sql);
+
+        String collectsql =
+                "CREATE TABLE news_collect(" +
+                        "news_id         VARCHAR(200)," +
+                        "collect_time    DATETIME" +
+                        ");";
+        db.execSQL(collectsql);
     }
 
     @Override

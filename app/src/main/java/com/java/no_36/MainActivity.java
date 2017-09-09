@@ -3,6 +3,7 @@ package com.java.no_36;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -113,6 +114,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_shield) {
 
+        } else if(id == R.id.nav_history) {
+            Intent intent = new Intent(this, HistoryPage.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
