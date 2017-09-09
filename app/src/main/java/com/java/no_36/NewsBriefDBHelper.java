@@ -35,7 +35,8 @@ public class NewsBriefDBHelper extends SQLiteOpenHelper
                 "news_title      VARCHAR(1000)," +
                 "news_url        VARCHAR(200)," +
                 "news_video      VARCHAR(4000)," +
-                "news_intro      VARCHAR(4000)" +
+                "news_intro      VARCHAR(4000)," +
+                "score           REAL" +
             ");";
         db.execSQL(sql);
     }

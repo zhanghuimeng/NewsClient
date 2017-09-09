@@ -30,6 +30,7 @@ public class NewsBriefBean
     private String news_url;
     private String[] news_video;
     private String news_intro;
+    private double score;
 
     public void setLang_type(String lang_type) { this.lang_type = lang_type; }
     public String getLang_type() { return lang_type; }
@@ -73,4 +74,8 @@ public class NewsBriefBean
 
     public void setNews_intro(String news_intro) { this.news_intro = news_intro; }
     public String getNews_intro() { return news_intro; }
+
+    public void setScore(double score) { this.score = score; }
+    public void setScore() { this.score = Math.random(); }
+    public double getScore() { return score; }
 }

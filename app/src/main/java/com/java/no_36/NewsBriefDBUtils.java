@@ -43,6 +43,7 @@ public class NewsBriefDBUtils
             value.put("news_url", bean.getNews_url());
             value.put("news_video", joinObject(bean.getNews_video(), DELIMITER));
             value.put("news_intro", bean.getNews_intro());
+            value.put("score", bean.getScore());
 
             sqLite.insert(NewsBriefDBHelper.TABLE_NAME, null, value);
         }
@@ -81,6 +82,7 @@ public class NewsBriefDBUtils
                 bean.setNews_url(cursor.getString(8));
                 bean.setNews_video(cursor.getString(9).split(DELIMITER));
                 bean.setNews_intro(cursor.getString(10));
+                bean.setScore();
                 arrayList.add(bean);
             }
         }
