@@ -6,6 +6,8 @@ import java.util.List;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,35 +17,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView.OnItemClickListener;
+import android.support.v4.app.Fragment;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
+
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnItemClickListener
+        implements NavigationView.OnNavigationItemSelectedListener
 {
-    private Context mContext;
-    private TextView textView;
-    NewsBriefUtils newsBriefUtils;
-    List<NewsBriefBean> listNewsBriefBean;
-    ListView listview;
-    private Handler mHandler = new Handler()
-    {
-        public void handleMessage(android.os.Message msg)
-        {
-            listNewsBriefBean = (List<NewsBriefBean>) msg.obj;
-            NewsBriefAdapter newsAdapter = new NewsBriefAdapter(MainActivity.this, listNewsBriefBean);
-            listview.setAdapter(newsAdapter);
 
-        };
-    };
+    /* add by lwt */
+    private ViewPager mViewPager;
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -51,8 +35,12 @@ public class MainActivity extends AppCompatActivity
         // auto-gen start
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        initViewPager();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -73,42 +61,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         // auto-gen end
 
-        mContext = MainActivity.this;
-        listview = (ListView) findViewById(R.id.list_news_brief);
-        newsBriefUtils = new NewsBriefUtils();
-        NewsBriefDBUtils newsDatabase = new NewsBriefDBUtils(mContext);
 
-        // 1.先去数据库中获取缓存的新闻数据展示到listview
-        ArrayList<NewsBriefBean> allnews_database = NewsBriefUtils.getDBNews(mContext);
-
-        if (allnews_database != null && allnews_database.size() > 0)
-        {
-            // 创建一个adapter设置给listview
-            NewsBriefAdapter newsAdapter = new NewsBriefAdapter(mContext, allnews_database);
-            listview.setAdapter(newsAdapter);
-        }
-
-        new Thread(new Runnable() {
-
-            @Override
-            public void run()
-            {
-                // 从网络中调取数据
-                listNewsBriefBean = newsBriefUtils.getNetNewsBrief(mContext, 1, 20);
-                Message message = Message.obtain();
-                message.obj = listNewsBriefBean;
-                mHandler.sendMessage(message);
-            }
-        }).start();
-
-        listview.setOnItemClickListener(this);
-    }
-
-    // 当List被点击的时候
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(this, NEWS_PAGE.class);
-        startActivity(intent);
     }
 
     @Override
@@ -154,7 +107,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_night) {
 
         } else if (id == R.id.nav_classify) {
-
+            ClassifyDialog classifydialog = new ClassifyDialog(MainActivity.this);
+            classifydialog.createmydialog();
         } else if (id == R.id.nav_text) {
 
         } else if (id == R.id.nav_shield) {
@@ -165,4 +119,39 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void initViewPager() {
+        mTabLayout = (TabLayout) findViewById(R.id.tablayout);
+        List<String> titles = new ArrayList();
+        List<Fragment> fragments = new ArrayList<>();
+
+
+        titles.add("推荐");
+        titles.add("科技");
+        titles.add("教育");
+        titles.add("军事");
+        titles.add("国内");
+        titles.add("社会");
+        titles.add("文化");
+        titles.add("汽车");
+        titles.add("国际");
+        titles.add("体育");
+        titles.add("财经");
+        titles.add("健康");
+        titles.add("娱乐");
+
+
+        for(int i=0;i<titles.size();i++){
+            mTabLayout.addTab(mTabLayout.newTab().setText(titles.get(i)));
+            fragments.add(new BoxBaseFragment());
+        }
+
+        FragmentAdapter mFragmentAdapteradapter =
+                new FragmentAdapter(getSupportFragmentManager(), fragments, titles);
+        mViewPager.setAdapter(mFragmentAdapteradapter);
+        //将TabLayout和ViewPager关联起来。
+        mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+
 }
