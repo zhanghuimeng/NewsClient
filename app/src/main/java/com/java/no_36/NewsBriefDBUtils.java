@@ -28,8 +28,20 @@ public class NewsBriefDBUtils
     public void saveNews(ArrayList<NewsBriefBean> arrayList)
     {
         SQLiteDatabase sqLite = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         for(NewsBriefBean bean : arrayList)
         {
+            // 先查找新闻是否已存在
+
+            Cursor cursor = db.query(true, "news_brief", new String[]{"news_id"}, "id=?",
+                    new String[]{bean.getNews_id()}, null, null, null, null);
+            if (cursor.getCount() > 0)
+            {
+                cursor.close();
+                continue;
+            }
+            cursor.close();
+
             ContentValues value = new ContentValues();
 
             value.put("lang_type", bean.getLang_type());
@@ -59,7 +71,7 @@ public class NewsBriefDBUtils
         db.close();
     }
 
-    // 从数据库中获取存储的行为
+    // 从数据库中获取全部内容并全都返回
     public ArrayList<NewsBriefBean> getNews()
     {
         ArrayList<NewsBriefBean> arrayList = new ArrayList<NewsBriefBean>();
