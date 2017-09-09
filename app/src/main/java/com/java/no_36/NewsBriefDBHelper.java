@@ -15,9 +15,10 @@ import java.text.SimpleDateFormat;
 public class NewsBriefDBHelper extends SQLiteOpenHelper
 {
     public static final String TABLE_NAME = "news_brief";
+    public final static int VERSION = 2;
 
     public NewsBriefDBHelper(Context context) {
-        super(context, "NewsBrief", null, 1);
+        super(context, "NewsBrief", null, VERSION);
     }
 
     @Override
@@ -42,8 +43,10 @@ public class NewsBriefDBHelper extends SQLiteOpenHelper
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    {
         // TODO Auto-generated method stub
-
+        if (oldVersion == 1 && newVersion == 2)
+            db.execSQL("ALTER TABLE news_brief ADD score REAL");
     }
 }

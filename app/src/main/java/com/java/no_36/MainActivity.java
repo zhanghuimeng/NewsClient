@@ -36,9 +36,13 @@ public class MainActivity extends AppCompatActivity
 {
     private Context mContext;
     private TextView textView;
-    NewsBriefUtils newsBriefUtils;
-    List<NewsBriefBean> listNewsBriefBean;
-    ListView listview;
+    private NewsBriefUtils newsBriefUtils;
+    private List<NewsBriefBean> listNewsBriefBean;
+    private ListView listview;
+    private NewsBriefAdapter newsAdapter;
+    private int page_size = 20;
+    private int page_number = 0;
+
     private Handler mHandler = new Handler()
     {
         public void handleMessage(android.os.Message msg)
@@ -78,6 +82,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         // auto-gen end
 
+
+        // 设置listview相关
+        setListViewScroll();
+    }
+
+    private void setListViewScroll()
+    {
         mContext = MainActivity.this;
         listview = (ListView) findViewById(R.id.list_news_brief);
         newsBriefUtils = new NewsBriefUtils();
@@ -85,11 +96,12 @@ public class MainActivity extends AppCompatActivity
 
         // 1.先去数据库中获取缓存的新闻数据展示到listview
         ArrayList<NewsBriefBean> allnews_database = NewsBriefUtils.getDBNews(mContext);
+        Log.i("setListViewScroll", String.valueOf(allnews_database.size()));
 
         if (allnews_database != null && allnews_database.size() > 0)
         {
             // 创建一个adapter设置给listview
-            NewsBriefAdapter newsAdapter = new NewsBriefAdapter(mContext, allnews_database);
+            newsAdapter = new NewsBriefAdapter(mContext, allnews_database);
             listview.setAdapter(newsAdapter);
         }
 
@@ -100,6 +112,8 @@ public class MainActivity extends AppCompatActivity
             {
                 // 从网络中调取数据
                 listNewsBriefBean = newsBriefUtils.getNetNewsBrief(mContext, 1, 20);
+                if (listNewsBriefBean == null)
+                    return;
                 Message message = Message.obtain();
                 message.obj = listNewsBriefBean;
                 mHandler.sendMessage(message);

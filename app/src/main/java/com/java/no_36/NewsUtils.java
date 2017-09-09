@@ -50,7 +50,7 @@ public class NewsUtils
                     InputStream is = conn.getInputStream();
                     String result = StreamUtils.convertStream(is);
                     json = new JSONObject(result);
-                    mCache.put(news_id, json, SAVE_TIME); // 存入缓存中
+                    mCache.put(news_id, json); // 存入缓存中
                     is.close();
                 }
 
