@@ -102,9 +102,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         } else if (id == R.id.nav_night) {
 
-        } else if (id == R.id.nav_classify) {
-            ClassifyDialog classifydialog = new ClassifyDialog(MainActivity.this);
-            classifydialog.createmydialog();
         } else if (id == R.id.nav_text) {
 
         } else if (id == R.id.nav_shield) {

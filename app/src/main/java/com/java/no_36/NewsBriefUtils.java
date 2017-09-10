@@ -26,7 +26,6 @@ public class NewsBriefUtils
 
     public static ArrayList<NewsBriefBean> getNetNewsBrief(Context context, int pageNo, int pageSize)
     {
-        ArrayList<NewsBriefBean> arraylistNews = new ArrayList<NewsBriefBean>();
         try
         {
             URL url = new URL(String.format(NEWS_BRIEF_URL, pageNo, pageSize));
@@ -41,47 +40,42 @@ public class NewsBriefUtils
                 InputStream is = conn.getInputStream();
                 String result = StreamUtils.convertStream(is);
                 Log.i("NewsBriefUtils", result);
-
-                JSONObject root_json = new JSONObject(result);
-                JSONArray jsonArray  = root_json.getJSONArray("list");
-                for (int i = 0; i < jsonArray.length(); i ++ )
-                {
-                    JSONObject json = jsonArray.getJSONObject(i);
-                    NewsBriefBean bean = new NewsBriefBean();
-
-                    bean.setLang_type(json.getString("lang_Type"));
-                    bean.setNews_class_tag(json.getString("newsClassTag"));
-                    bean.setNews_author(json.getString("news_Author"));
-                    bean.setNews_id(json.getString("news_ID"));
-                    bean.setNews_pictures(json.getString("news_Pictures").split("\\s|;"));
-                    bean.setNews_source(json.getString("news_Source"));
-                    try { bean.setNews_time(sdf.parse(json.getString("news_Time").substring(0, 8))); }
-                    catch (Exception e) { bean.setNews_time(sdf.parse("20150101")); }
-                    // temporary fix: 这个API返回的结果非常鬼畜
-                    bean.setNews_title(json.getString("news_Title"));
-                    bean.setNews_url(json.getString("news_URL"));
-                    bean.setNews_video(json.getString("news_Video").split("\\s|;"));
-                    bean.setNews_intro(json.getString("news_Intro"));
-                    bean.setNews_isread(0);
-                    bean.setScore();
-                    Log.i("NewsBriefUtils", bean.getNews_url());
-                    arraylistNews.add(bean);
-                }
-
-                // 如果获取到网络上的数据，就删除之前获取的新闻数据，保存新的新闻数据
-                // new NewsDBUtils(context).deleteNews();
-                new NewsBriefDBUtils(context).saveNews(arraylistNews);
-
                 is.close();
-
+                return setNetBeans(context, result);
             }
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        return null;
+    }
 
-        return arraylistNews;
+
+    public static ArrayList<NewsBriefBean> getNetTypeNewsBrief(Context context, String classTag, int pageNo, int pageSize) {
+        try
+        {
+            URL url = new URL(String.format(NEWS_BRIEF_URL, pageNo, pageSize));
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(20 * 1000);
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == 200)
+            {
+                // 获取请求到的流信息
+                InputStream is = conn.getInputStream();
+                String result = StreamUtils.convertStream(is);
+                Log.i("NewsBriefUtils", result);
+                is.close();
+                return setNetBeans(context, result);
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // 返回数据库缓存到的数据
@@ -90,6 +84,48 @@ public class NewsBriefUtils
         return new NewsBriefDBUtils(context).getNews();
     }
 
+    // 返回某个类型的新闻
+    public static ArrayList<NewsBriefBean> getTypeDBNews(Context context, int newsClassTag)
+    {
+        return new NewsBriefDBUtils(context).getTypeNews(newsClassTag);
+    }
 
+    private static ArrayList<NewsBriefBean> setNetBeans(Context context, String result) {
+        ArrayList<NewsBriefBean> arraylistNews = new ArrayList<NewsBriefBean>();
+        try{
+        JSONObject root_json = new JSONObject(result);
+        JSONArray jsonArray  = root_json.getJSONArray("list");
+        for (int i = 0; i < jsonArray.length(); i ++ ) {
+            JSONObject json = jsonArray.getJSONObject(i);
+            NewsBriefBean bean = new NewsBriefBean();
+
+            bean.setLang_type(json.getString("lang_Type"));
+            bean.setNews_class_tag(json.getString("newsClassTag"));
+            bean.setNews_author(json.getString("news_Author"));
+            bean.setNews_id(json.getString("news_ID"));
+            bean.setNews_pictures(json.getString("news_Pictures").split("\\s|;"));
+            bean.setNews_source(json.getString("news_Source"));
+            try {
+                bean.setNews_time(sdf.parse(json.getString("news_Time").substring(0, 8)));
+            } catch (Exception e) {
+                bean.setNews_time(sdf.parse("20150101"));
+            }
+            // temporary fix: 这个API返回的结果非常鬼畜
+            bean.setNews_title(json.getString("news_Title"));
+            bean.setNews_url(json.getString("news_URL"));
+            bean.setNews_video(json.getString("news_Video").split("\\s|;"));
+            bean.setNews_intro(json.getString("news_Intro"));
+            bean.setNews_isread(0);
+            bean.setScore();
+            Log.i("NewsBriefUtils", bean.getNews_url());
+            arraylistNews.add(bean);
+        }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        new NewsBriefDBUtils(context).saveNews(arraylistNews);
+        return arraylistNews;
+    }
 
 }
