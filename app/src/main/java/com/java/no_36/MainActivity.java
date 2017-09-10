@@ -161,8 +161,12 @@ public class MainActivity extends AppCompatActivity
                 mHandler.sendMessage(message);
             }
 
-            for (int i = 1; i <= 500; i++)
+            // 从网络上缓存
+            for (int i = CommonUtils.getCachedBrief() + 1; i <= 500; i++)
+            {
                 NewsBriefUtils.getNetNewsBrief(mContext, i, 500);
+                CommonUtils.setCachedBrief(i + 1);
+            }
 
             }
         }).start();
