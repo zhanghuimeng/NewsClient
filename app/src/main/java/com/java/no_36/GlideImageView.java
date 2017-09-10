@@ -27,7 +27,7 @@ public class GlideImageView extends AppCompatImageView
     public void setImage_url(String image_url) {
         this.image_url = image_url;
 
-        Glide.with(this).load(image_url).apply(placeholderOf(R.drawable.user_placeholder))
+        Glide.with(getContext().getApplicationContext()).load(image_url).apply(placeholderOf(R.drawable.user_placeholder))
                 .apply(errorOf(R.drawable.user_placeholder_error)).into(this);
     }
 

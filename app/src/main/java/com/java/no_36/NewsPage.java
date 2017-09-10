@@ -28,20 +28,18 @@ import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.SynthesizerListener;
 
-import android.os.Bundle;
-import android.app.Activity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.app.ActionBar;
 
 public class NewsPage extends AppCompatActivity implements OnClickListener {
 
     Intent mintent;
     private String text;
     private SpeechSynthesizer mySynthesizer;
-    private Button tts_Button;
+    private FloatingActionButton tts_Button;
+    private boolean isclicked;
     private Handler mHandler = new Handler()
     {
         public void handleMessage(android.os.Message msg)
@@ -74,12 +72,14 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_page);
         this.mintent = getIntent();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        tts_Button = (Button) findViewById(R.id.fab);
+        tts_Button = (FloatingActionButton) findViewById(R.id.fab);
         tts_Button.setOnClickListener(this);
 
+        isclicked = false;
         Bundle bundle = mintent.getExtras();
         final String id = bundle.getString("id");
         final Context context = this;
@@ -113,9 +113,10 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
                 showShare();
                 break;
             case R.id.Collect:
-                Toast.makeText(this,"you clicked Collect",Toast.LENGTH_SHORT).show();
+                getCollect();
+                break;
             case R.id.Read:
-                Toast.makeText(this,"you clicked Read",Toast.LENGTH_SHORT).show();
+                disCollect();
                 break;
             default:
         }
@@ -173,17 +174,43 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
         // TODO Auto-generated method stub
         switch (v.getId()){
             case R.id.fab:
-                //设置发音人
-                mySynthesizer.setParameter(SpeechConstant.VOICE_NAME,"xiaoyan");
-                //设置音调
-                mySynthesizer.setParameter(SpeechConstant.PITCH,"50");
-                //设置音量
-                mySynthesizer.setParameter(SpeechConstant.VOLUME,"50");
-                int code = mySynthesizer.startSpeaking(text, mTtsListener);
-                Log.d("start code:", code+"");
+                if(isclicked) {
+                    mySynthesizer.stopSpeaking();
+                    isclicked = false;
+                } else {
+                    //设置发音人
+                    mySynthesizer.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan");
+                    //设置音调
+                    mySynthesizer.setParameter(SpeechConstant.PITCH, "50");
+                    //设置音量
+                    mySynthesizer.setParameter(SpeechConstant.VOLUME, "50");
+                    int code = mySynthesizer.startSpeaking(text, mTtsListener);
+                    Log.d("start code:", code + "");
+                    isclicked = true;
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    private void getCollect() {
+        Bundle bundle = mintent.getExtras();
+        final String id = bundle.getString("id");
+        new CollectDBUtils(this).saveCollects(id);
+        Toast.makeText(getApplicationContext(), "已收藏",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void disCollect() {
+        Bundle bundle = mintent.getExtras();
+        final String id = bundle.getString("id");
+        boolean jud = new CollectDBUtils(this).deleteoneCollect(id);
+        if(jud)
+            Toast.makeText(getApplicationContext(), "已取消收藏",
+                    Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(getApplicationContext(), "您还未收藏",
+                    Toast.LENGTH_SHORT).show();
     }
 }

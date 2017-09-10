@@ -63,6 +63,7 @@ public class NewsBriefUtils
                     bean.setNews_video(json.getString("news_Video").split("\\s|;"));
                     bean.setNews_intro(json.getString("news_Intro"));
                     bean.setNews_isread(0);
+                    bean.setScore();
                     Log.i("NewsBriefUtils", bean.getNews_url());
                     arraylistNews.add(bean);
                 }

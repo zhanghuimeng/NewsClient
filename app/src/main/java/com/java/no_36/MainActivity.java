@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -43,15 +45,6 @@ public class MainActivity extends AppCompatActivity
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         initViewPager();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -64,6 +57,7 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
 
     @Override
     public void onBackPressed() {
@@ -104,7 +98,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_collect) {
-
+            Intent intent = new Intent(this, CollectPage.class);
+            startActivity(intent);
         } else if (id == R.id.nav_night) {
 
         } else if (id == R.id.nav_classify) {
@@ -129,26 +124,15 @@ public class MainActivity extends AppCompatActivity
         List<String> titles = new ArrayList();
         List<Fragment> fragments = new ArrayList<>();
 
-
         titles.add("推荐");
-        titles.add("科技");
-        titles.add("教育");
-        titles.add("军事");
-        titles.add("国内");
-        titles.add("社会");
-        titles.add("文化");
-        titles.add("汽车");
-        titles.add("国际");
-        titles.add("体育");
-        titles.add("财经");
-        titles.add("健康");
-        titles.add("娱乐");
+        titles.add("分类");
 
+        mTabLayout.addTab(mTabLayout.newTab().setText(titles.get(0)));
+        fragments.add(new BoxBaseFragment());
 
-        for(int i=0;i<titles.size();i++){
-            mTabLayout.addTab(mTabLayout.newTab().setText(titles.get(i)));
-            fragments.add(new BoxBaseFragment());
-        }
+        mTabLayout.addTab(mTabLayout.newTab().setText(titles.get(1)));
+        fragments.add(new ClassifyFragment());
+
 
         FragmentAdapter mFragmentAdapteradapter =
                 new FragmentAdapter(getSupportFragmentManager(), fragments, titles);

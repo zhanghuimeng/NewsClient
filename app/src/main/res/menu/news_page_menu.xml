@@ -4,13 +4,13 @@
     <group >
         <item
             android:id="@+id/Share"
-            android:title="Share" />
+            android:title="分享" />
         <item
             android:id="@+id/Collect"
-            android:title="Collect" />
+            android:title="收藏" />
         <item
             android:id="@+id/Read"
-            android:title="Read" />
+            android:title="取消收藏" />
     </group>
 
 </menu>

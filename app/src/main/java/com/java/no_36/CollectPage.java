@@ -1,6 +1,5 @@
 package com.java.no_36;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,34 +13,27 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class HistoryPage extends AppCompatActivity implements AdapterView.OnItemClickListener{
-    ArrayList<NewsBriefBean> arraylistHistorys;
+public class CollectPage extends AppCompatActivity implements AdapterView.OnItemClickListener {
+
     private ListView mlistview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history_page);
+        setContentView(R.layout.activity_collect_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        mlistview = (ListView) findViewById(R.id.list_news_collect);
+        CollectDBUtils collectDatabase = new CollectDBUtils(this);
+        ArrayList<NewsBriefBean> allcollects_database = collectDatabase.getCollects();
+        if (allcollects_database != null && allcollects_database.size() > 0)
+        {
+            // 创建一个adapter设置给listview
+            NewsHistoryAdapter newsAdapter = new NewsHistoryAdapter(this, allcollects_database);
+            mlistview.setAdapter(newsAdapter);
+        }
 
-        mlistview = (ListView) findViewById(R.id.list_news_his);
-        gethistory();
-        NewsHistoryAdapter newsAdapter = new NewsHistoryAdapter(this, arraylistHistorys);
-        mlistview.setAdapter(newsAdapter);
         mlistview.setOnItemClickListener(this);
-    }
-
-    void gethistory() {
-        arraylistHistorys = new NewsBriefDBUtils(HistoryPage.this).getHistory();
     }
 
     @Override
@@ -57,4 +49,5 @@ public class HistoryPage extends AppCompatActivity implements AdapterView.OnItem
             intent.putExtra("image", news.getNews_pictures()[0]);
         startActivity(intent);
     }
+
 }

@@ -16,9 +16,11 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClickListener{
@@ -77,12 +79,6 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        /*NewsBriefBean news = (NewsBriefBean) adapterView.getItemAtPosition(position);
-        String url = news.getNews_url();
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        startActivity(intent);*/
         NewsBriefBean news = (NewsBriefBean) adapterView.getItemAtPosition(position);
         String url = news.getNews_url();
         Intent intent = new Intent(getActivity(), NewsPage.class);

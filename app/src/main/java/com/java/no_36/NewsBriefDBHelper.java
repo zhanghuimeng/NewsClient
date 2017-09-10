@@ -37,14 +37,16 @@ public class NewsBriefDBHelper extends SQLiteOpenHelper
                 "news_url        VARCHAR(200)," +
                 "news_video      VARCHAR(4000)," +
                 "news_intro      VARCHAR(4000)," +
-                "news_isread     INTEGER" +
+                "news_isread     INTEGER," +
+                    "score           REAL" +
+
             ");";
         db.execSQL(sql);
 
         String collectsql =
                 "CREATE TABLE news_collect(" +
-                        "news_id         VARCHAR(200)," +
-                        "collect_time    DATETIME" +
+                        "news_id         VARCHAR(200) primary key," +
+                        "collect_time    DATETIME DEFAULT CURRENT_TIMESTAMP" +
                         ");";
         db.execSQL(collectsql);
     }
