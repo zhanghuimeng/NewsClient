@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity
     private List<NewsBriefBean> listNewsBriefBean;
     private ListView listview;
     private NewsBriefAdapter newsAdapter;
-    private int page_size = 20;
-    private int page_number = 0;
+    private NewsBriefDBUtils newsDatabase;
+    private final int PAGE_SIZE = 20;
 
     private Handler mHandler = new Handler()
     {
@@ -82,6 +82,10 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         // auto-gen end
 
+        // 设置CommonUtils的内容
+        CommonUtils.setContext(getApplicationContext());
+        // 测试：文字模式
+        CommonUtils.setTextMode(false);
 
         // 设置listview相关
         setListViewScroll();
@@ -92,9 +96,23 @@ public class MainActivity extends AppCompatActivity
         mContext = MainActivity.this;
         listview = (ListView) findViewById(R.id.list_news_brief);
         newsBriefUtils = new NewsBriefUtils();
-        NewsBriefDBUtils newsDatabase = new NewsBriefDBUtils(mContext);
+        newsDatabase = new NewsBriefDBUtils(mContext);
 
-        // 1.先去数据库中获取缓存的新闻数据展示到listview
+        // 抄来的代码
+        /*
+        listview.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                loadNextDataFromApi(page);
+                // or loadNextDataFromApi(totalItemsCount);
+                return true; // ONLY if more data is actually being loaded; false otherwise.
+            }
+        });
+        */
+
+        // 1.先去数据库中获取缓存(<=PAGE_SIZE条)的新闻数据展示到listview
         ArrayList<NewsBriefBean> allnews_database = NewsBriefUtils.getDBNews(mContext);
         Log.i("setListViewScroll", String.valueOf(allnews_database.size()));
 
