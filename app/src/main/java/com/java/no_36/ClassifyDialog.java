@@ -29,7 +29,7 @@ public class ClassifyDialog {
         mEditor = mSharedPreferences.edit();
         for(int i = 0; i < 12; i++) {
             String tmp = "class" + areas[i];
-            areaState[i] = mSharedPreferences.getBoolean(tmp, false);
+            areaState[i] = mSharedPreferences.getBoolean(tmp, true);
         }
     }
     public void createmydialog() {
