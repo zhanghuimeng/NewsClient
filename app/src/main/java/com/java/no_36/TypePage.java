@@ -2,6 +2,7 @@ package com.java.no_36;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,12 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TypePage extends AppCompatActivity {
+public class TypePage extends AppCompatActivity implements AdapterView.OnItemClickListener{
 
     private Intent mintent;
     private String type_name;
@@ -67,7 +69,7 @@ public class TypePage extends AppCompatActivity {
                 @Override
                 public void run() {
                     // 从网络中调取数据
-                    listNewsBriefBean = newsBriefUtils.getNetTypeNewsBrief(TypePage.this, type_name, 1, 20);
+                    listNewsBriefBean = newsBriefUtils.getNetTypeNewsBrief(TypePage.this, class_tag, 1, 20);
                     Message message = Message.obtain();
                     message.obj = listNewsBriefBean;
                     mHandler.sendMessage(message);
@@ -75,7 +77,21 @@ public class TypePage extends AppCompatActivity {
             }).start();
         }
 
+        mlistview.setOnItemClickListener(this);
+    }
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        NewsBriefBean news = (NewsBriefBean) adapterView.getItemAtPosition(position);
+        String url = news.getNews_url();
+        Intent intent = new Intent(this, NewsPage.class);
+        intent.setData(Uri.parse(url));
+        intent.putExtra("id", news.getNews_id());
+        intent.putExtra("title", news.getNews_title());
+        intent.putExtra("brief", news.getNews_intro());
+        if(news.getNews_pictures().length > 0)
+            intent.putExtra("image", news.getNews_pictures()[0]);
+        startActivity(intent);
     }
 
 }

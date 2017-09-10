@@ -22,6 +22,12 @@ public class NewsBriefUtils
     private final static String NEWS_BRIEF_URL =
             "http://166.111.68.66:2042/news/action/query/latest?pageNo=%d&pageSize=%d";
 
+    private  final static String NEWS_SEARCH_URL =
+            "http://166.111.68.66:2042/news/action/query/search?keyword=%s&pageNo=%d&pageSize=%d";
+
+    private final static String NEWS_CATEGORY_URL =
+            "http://166.111.68.66:2042/news/action/query/latest?pageNo=%d&pageSize=%d&category=%d";
+
     private final static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
     public static ArrayList<NewsBriefBean> getNetNewsBrief(Context context, int pageNo, int pageSize)
@@ -41,7 +47,7 @@ public class NewsBriefUtils
                 String result = StreamUtils.convertStream(is);
                 Log.i("NewsBriefUtils", result);
                 is.close();
-                return setNetBeans(context, result);
+                return setNetBeans(context, result, true);
             }
 
         } catch (Exception e) {
@@ -52,10 +58,10 @@ public class NewsBriefUtils
     }
 
 
-    public static ArrayList<NewsBriefBean> getNetTypeNewsBrief(Context context, String classTag, int pageNo, int pageSize) {
+    public static ArrayList<NewsBriefBean> getNetTypeNewsBrief(Context context, int classTag, int pageNo, int pageSize) {
         try
         {
-            URL url = new URL(String.format(NEWS_BRIEF_URL, pageNo, pageSize));
+            URL url = new URL(String.format(NEWS_CATEGORY_URL, pageNo, pageSize, classTag));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(20 * 1000);
@@ -68,7 +74,33 @@ public class NewsBriefUtils
                 String result = StreamUtils.convertStream(is);
                 Log.i("NewsBriefUtils", result);
                 is.close();
-                return setNetBeans(context, result);
+                return setNetBeans(context, result, true);
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ArrayList<NewsBriefBean> getNetSearchNewsBrief(Context context, String searchkeyword, int pageNo, int pageSize) {
+        try
+        {
+            URL url = new URL(String.format(NEWS_SEARCH_URL, searchkeyword, pageNo, pageSize));
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(20 * 1000);
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == 200)
+            {
+                // 获取请求到的流信息
+                InputStream is = conn.getInputStream();
+                String result = StreamUtils.convertStream(is);
+                Log.i("NewsBriefUtils", result);
+                is.close();
+                return setNetBeans(context, result, false);
             }
 
         } catch (Exception e) {
@@ -90,7 +122,7 @@ public class NewsBriefUtils
         return new NewsBriefDBUtils(context).getTypeNews(newsClassTag);
     }
 
-    private static ArrayList<NewsBriefBean> setNetBeans(Context context, String result) {
+    private static ArrayList<NewsBriefBean> setNetBeans(Context context, String result, boolean isStore) {
         ArrayList<NewsBriefBean> arraylistNews = new ArrayList<NewsBriefBean>();
         try{
         JSONObject root_json = new JSONObject(result);
@@ -124,7 +156,8 @@ public class NewsBriefUtils
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        new NewsBriefDBUtils(context).saveNews(arraylistNews);
+        if(isStore)
+            new NewsBriefDBUtils(context).saveNews(arraylistNews);
         return arraylistNews;
     }
 
