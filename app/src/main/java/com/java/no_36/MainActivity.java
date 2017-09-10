@@ -3,6 +3,9 @@ package com.java.no_36;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.UiModeManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,12 +31,22 @@ public class MainActivity extends AppCompatActivity
     /* add by lwt */
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
+    private SharedPreferences config;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         // auto-gen start
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        config = getSharedPreferences("config", MODE_PRIVATE);
+        int themeId = getThemeId();
+        if (themeId != 0) {
+            setTheme(themeId);
+        }
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -105,7 +118,19 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_collect) {
 
         } else if (id == R.id.nav_night) {
+            boolean isNightMode = getMode();
+            isNightMode = !isNightMode;
+            setMode(isNightMode);
+            int themeId;
 
+            if (isNightMode) {
+                themeId = R.style.AppTheme_Dark;
+            }else {
+                themeId = R.style.AppTheme_Light;
+            }
+
+            setThemeId(themeId);
+            this.recreate();
         } else if (id == R.id.nav_classify) {
             ClassifyDialog classifydialog = new ClassifyDialog(MainActivity.this);
             classifydialog.createmydialog();
@@ -152,6 +177,23 @@ public class MainActivity extends AppCompatActivity
         //将TabLayout和ViewPager关联起来。
         mTabLayout.setupWithViewPager(mViewPager);
     }
+    private void setThemeId(int themeId) {
+        SharedPreferences.Editor editor = config.edit();
+        editor.putInt("theme_id", themeId);
+        editor.commit();
+    }
 
+    private int getThemeId() {
+        return config.getInt("theme_id", 0);
+    }
+    private void setMode(boolean isNightMode) {
+        SharedPreferences.Editor editor = config.edit();
+        editor.putBoolean("is_night_mode", isNightMode);
+        editor.commit();
+    }
+
+    private boolean getMode() {
+        return config.getBoolean("is_night_mode", false);
+    }
 
 }
