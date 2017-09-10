@@ -28,6 +28,7 @@ import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity
     private ListView listview;
     private NewsBriefAdapter newsAdapter;
     private NewsBriefDBUtils newsDatabase;
+    private LinearLayout loading; // 在下侧显示正在加载
     private final int PAGE_SIZE = 20;
 
     private Handler mHandler = new Handler()
@@ -48,9 +50,8 @@ public class MainActivity extends AppCompatActivity
         public void handleMessage(android.os.Message msg)
         {
             listNewsBriefBean = (List<NewsBriefBean>) msg.obj;
-            NewsBriefAdapter newsAdapter = new NewsBriefAdapter(MainActivity.this, listNewsBriefBean);
+            newsAdapter = new NewsBriefAdapter(MainActivity.this, listNewsBriefBean);
             listview.setAdapter(newsAdapter);
-
         };
     };
 
@@ -87,6 +88,8 @@ public class MainActivity extends AppCompatActivity
         // 测试：文字模式
         CommonUtils.setTextMode(false);
 
+        loading = (LinearLayout) findViewById(R.id.load_more_linearlayout);
+
         // 设置listview相关
         setListViewScroll();
     }
@@ -99,7 +102,6 @@ public class MainActivity extends AppCompatActivity
         newsDatabase = new NewsBriefDBUtils(mContext);
 
         // 抄来的代码
-        /*
         listview.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
@@ -110,9 +112,9 @@ public class MainActivity extends AppCompatActivity
                 return true; // ONLY if more data is actually being loaded; false otherwise.
             }
         });
-        */
 
         // 1.先去数据库中获取缓存(<=PAGE_SIZE条)的新闻数据展示到listview
+        /*
         ArrayList<NewsBriefBean> allnews_database = NewsBriefUtils.getDBNews(mContext);
         Log.i("setListViewScroll", String.valueOf(allnews_database.size()));
 
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity
             newsAdapter = new NewsBriefAdapter(mContext, allnews_database);
             listview.setAdapter(newsAdapter);
         }
+        */
 
         new Thread(new Runnable() {
 
@@ -129,7 +132,7 @@ public class MainActivity extends AppCompatActivity
             public void run()
             {
                 // 从网络中调取数据
-                listNewsBriefBean = newsBriefUtils.getNetNewsBrief(mContext, 1, 20);
+                listNewsBriefBean = newsBriefUtils.getNetNewsBrief(mContext, 1, 500);
                 if (listNewsBriefBean == null)
                     return;
                 Message message = Message.obtain();
@@ -140,6 +143,35 @@ public class MainActivity extends AppCompatActivity
 
         listview.setOnItemClickListener(this);
     }
+
+    private void loadNextDataFromApi(final int page)
+    {
+        loading.setVisibility(View.VISIBLE);
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                if (listNewsBriefBean == null) {
+                    listNewsBriefBean = newsDatabase.getNews(PAGE_SIZE, page, false);
+                } else {
+                    listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page, false));
+                }
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        loading.setVisibility(View.INVISIBLE);
+                        if (newsAdapter == null) {
+                            newsAdapter = new NewsBriefAdapter(getApplicationContext(), listNewsBriefBean);
+                            listview.setAdapter(newsAdapter);
+                        } else {
+                            // adapter存在的话，通知更新
+                            newsAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
 
     // 当List被点击的时候
     @Override
