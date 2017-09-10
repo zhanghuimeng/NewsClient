@@ -40,7 +40,7 @@ public class NewsBriefUtils
                 // 获取请求到的流信息
                 InputStream is = conn.getInputStream();
                 String result = StreamUtils.convertStream(is);
-                Log.i("NewsBriefUtils", result);
+                // Log.i("NewsBriefUtils", result);
 
                 JSONObject root_json = new JSONObject(result);
                 JSONArray jsonArray  = root_json.getJSONArray("list");
@@ -64,7 +64,7 @@ public class NewsBriefUtils
                     bean.setNews_intro(json.getString("news_Intro"));
                     bean.setScore();
 
-                    Log.i("NewsBriefUtils", bean.getNews_url());
+                    // Log.i("NewsBriefUtils", bean.getNews_url());
                     arraylistNews.add(bean);
                 }
 

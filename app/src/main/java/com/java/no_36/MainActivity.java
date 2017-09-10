@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import android.app.Activity;
@@ -44,12 +45,12 @@ public class MainActivity extends AppCompatActivity
     private NewsBriefDBUtils newsDatabase;
     private LinearLayout loading; // 在下侧显示正在加载
     private final int PAGE_SIZE = 20;
+    private int page = 0;
 
     private Handler mHandler = new Handler()
     {
         public void handleMessage(android.os.Message msg)
         {
-            listNewsBriefBean = (List<NewsBriefBean>) msg.obj;
             newsAdapter = new NewsBriefAdapter(MainActivity.this, listNewsBriefBean);
             listview.setAdapter(newsAdapter);
         };
@@ -102,68 +103,103 @@ public class MainActivity extends AppCompatActivity
         newsDatabase = new NewsBriefDBUtils(mContext);
 
         // 抄来的代码
-        listview.setOnScrollListener(new EndlessScrollListener() {
+        listview.setOnScrollListener(new AbsListView.OnScrollListener() {
+            // 当滚动状态放生改变时调用
             @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to your AdapterView
-                loadNextDataFromApi(page);
-                // or loadNextDataFromApi(totalItemsCount);
-                return true; // ONLY if more data is actually being loaded; false otherwise.
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE: // 空闲状态
+                        // 判断当前listview滚动的位置
+                        // 获取最后一条可见条目在集合里面的位置
+                        int lastVisiblePosition = listview.getLastVisiblePosition();
+                        System.out.println("最后一个可见条目的位置 = " + lastVisiblePosition);
+                        System.out.println("listViewBean的size = " + listNewsBriefBean.size());
+                        // 到了最后一个可见位置后继续查找
+                        if (lastVisiblePosition == listNewsBriefBean.size() - 1) {
+                            loadNextData(page++);
+                        }
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL: // 触摸状态
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_FLING: // 惯性滑行状态
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            // 滚动时调用
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
             }
         });
 
-        // 1.先去数据库中获取缓存(<=PAGE_SIZE条)的新闻数据展示到listview
-        /*
-        ArrayList<NewsBriefBean> allnews_database = NewsBriefUtils.getDBNews(mContext);
-        Log.i("setListViewScroll", String.valueOf(allnews_database.size()));
+        // 先试图从数据库中获取缓存(<=PAGE_SIZE条)的新闻数据展示到listview
+        listNewsBriefBean = newsDatabase.getNews(PAGE_SIZE, page++, false);
+        Log.e("从数据库中获取缓存", String.valueOf(listNewsBriefBean.size()));
 
-        if (allnews_database != null && allnews_database.size() > 0)
+        if (listNewsBriefBean != null && listNewsBriefBean.size() > 0)
         {
             // 创建一个adapter设置给listview
-            newsAdapter = new NewsBriefAdapter(mContext, allnews_database);
+            newsAdapter = new NewsBriefAdapter(mContext, listNewsBriefBean);
             listview.setAdapter(newsAdapter);
         }
-        */
 
         new Thread(new Runnable() {
 
             @Override
             public void run()
             {
-                // 从网络中调取数据
-                listNewsBriefBean = newsBriefUtils.getNetNewsBrief(mContext, 1, 500);
-                if (listNewsBriefBean == null)
+            // 如果没能从数据库中获取信息，就从网络上调取
+            if (listNewsBriefBean == null || listNewsBriefBean.size() == 0) {
+                listNewsBriefBean = NewsBriefUtils.getNetNewsBrief(mContext, 1, 20);
+                if (listNewsBriefBean == null || listNewsBriefBean.size() == 0)
                     return;
+                page++;
                 Message message = Message.obtain();
-                message.obj = listNewsBriefBean;
                 mHandler.sendMessage(message);
+            }
+
+            for (int i = 1; i <= 500; i++)
+                NewsBriefUtils.getNetNewsBrief(mContext, i, 500);
+
             }
         }).start();
 
         listview.setOnItemClickListener(this);
     }
 
-    private void loadNextDataFromApi(final int page)
+    private void loadNextData(final int page)
     {
         loading.setVisibility(View.VISIBLE);
         new Thread(new Runnable() {
-
             @Override
             public void run() {
-                if (listNewsBriefBean == null) {
-                    listNewsBriefBean = newsDatabase.getNews(PAGE_SIZE, page, false);
-                } else {
-                    listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page, false));
-                }
+
                 runOnUiThread(new Runnable() {
                     public void run() {
                         loading.setVisibility(View.INVISIBLE);
-                        if (newsAdapter == null) {
-                            newsAdapter = new NewsBriefAdapter(getApplicationContext(), listNewsBriefBean);
-                            listview.setAdapter(newsAdapter);
-                        } else {
-                            // adapter存在的话，通知更新
+                        if (newsAdapter == null)
+                        {
+                            if (listNewsBriefBean == null) {
+                                listNewsBriefBean = newsDatabase.getNews(PAGE_SIZE, page, false);
+                            } else {
+                                listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page, false));
+                            }
+                            if (newsAdapter != null)
+                            {
+                                newsAdapter = new NewsBriefAdapter(getApplicationContext(), listNewsBriefBean);
+                                listview.setAdapter(newsAdapter);
+                            }
+                        }
+                        else // adapter存在的话，通知更新（listNewsBriefBean必然也不为空了）
+                        {
+                            listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page, false));
+                            // 测试：加载某一种类的新闻（由于开始加载部分的没有改，所以前20条会返回奇怪的东西……
+                            // 总之像下面这样调用就可以返回固定种类的新闻了）
+                            /* listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page,
+                                    new String[]{"1", "3"}, false)); */
                             newsAdapter.notifyDataSetChanged();
                         }
                     }
