@@ -46,6 +46,15 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
         {
             NewsBean bean = (NewsBean) msg.obj;
 
+            if (bean == null)
+            {
+                TextView title = (TextView) findViewById(R.id.detail_title);
+                title.setText("网络错误");
+                TextView content = (TextView) findViewById(R.id.detail_content);
+                content.setText("网络错误");
+                return;
+            }
+
             GlideImageView iv = (GlideImageView) findViewById(R.id.detail_image);
             String[] news_pictures = bean.getNews_pictures();
             if (news_pictures != null && news_pictures.length > 0)

@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         // auto-gen end
 
+        // 设置CommonUtils的内容
+        CommonUtils.setContext(getApplicationContext());
 
     }
 
@@ -112,7 +114,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_night) {
 
         } else if (id == R.id.nav_text) {
-
+            CommonUtils.setTextMode(true);
+        } else if (id == R.id.nav_picture) {
+            CommonUtils.setTextMode(false);
         } else if (id == R.id.nav_shield) {
 
         } else if(id == R.id.nav_history) {
