@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.app.SearchManager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -57,7 +56,7 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
             @Override
             public void run() {
                 // 从网络中调取数据
-                listNewsBriefBean = newsBriefUtils.getNetSearchNewsBrief(SearchResultActivity.this, SearchContent, 1, 20);
+                listNewsBriefBean = newsBriefUtils.getNetSearchNewsBrief(SearchResultActivity.this, SearchContent, 1, 500);
                 Message message = Message.obtain();
                 message.obj = listNewsBriefBean;
                 mHandler.sendMessage(message);
@@ -82,6 +81,8 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
     }
 
     private int getThemeId() {
-        return config.getInt("theme_id", 0);
+        return config.getInt("theme_id", R.style.APPTheme_DayTheme);
     }
+
+
 }

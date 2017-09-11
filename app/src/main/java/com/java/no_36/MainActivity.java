@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private int getThemeId() {
-        return config.getInt("theme_id", 0);
+        return config.getInt("theme_id", R.style.APPTheme_DayTheme);
     }
     private void setMode(boolean isNightMode) {
         SharedPreferences.Editor editor = config.edit();

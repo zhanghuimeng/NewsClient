@@ -235,6 +235,6 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
     }
 
     private int getThemeId() {
-        return config.getInt("theme_id", 0);
+        return config.getInt("theme_id", R.style.APPTheme_DayTheme);
     }
 }

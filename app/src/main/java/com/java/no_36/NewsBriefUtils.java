@@ -25,6 +25,7 @@ public class NewsBriefUtils
     private  final static String NEWS_SEARCH_URL =
             "http://166.111.68.66:2042/news/action/query/search?keyword=%s&pageNo=%d&pageSize=%d";
 
+
     private final static String NEWS_CATEGORY_URL =
             "http://166.111.68.66:2042/news/action/query/latest?pageNo=%d&pageSize=%d&category=%d";
 
@@ -110,17 +111,6 @@ public class NewsBriefUtils
         return null;
     }
 
-    // 返回数据库缓存到的数据
-    public static ArrayList<NewsBriefBean> getDBNews(Context context)
-    {
-        return new NewsBriefDBUtils(context).getNews();
-    }
-
-    // 返回某个类型的新闻
-    public static ArrayList<NewsBriefBean> getTypeDBNews(Context context, int newsClassTag)
-    {
-        return new NewsBriefDBUtils(context).getTypeNews(newsClassTag);
-    }
 
     private static ArrayList<NewsBriefBean> setNetBeans(Context context, String result, boolean isStore) {
         ArrayList<NewsBriefBean> arraylistNews = new ArrayList<NewsBriefBean>();

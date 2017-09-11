@@ -61,6 +61,6 @@ public class CollectPage extends AppCompatActivity implements AdapterView.OnItem
     }
 
     private int getThemeId() {
-        return config.getInt("theme_id", 0);
+        return config.getInt("theme_id", R.style.APPTheme_DayTheme);
     }
 }
