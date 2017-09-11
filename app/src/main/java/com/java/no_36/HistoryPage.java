@@ -2,6 +2,7 @@ package com.java.no_36;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,16 +12,26 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
+import android.view.Window;
 import java.util.ArrayList;
 
 public class HistoryPage extends AppCompatActivity implements AdapterView.OnItemClickListener{
     ArrayList<NewsBriefBean> arraylistHistorys;
     private ListView mlistview;
+    private SharedPreferences config;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        config = getSharedPreferences("config", MODE_PRIVATE);
+        int themeId = getThemeId();
+        if (themeId != 0) {
+            setTheme(themeId);
+        }
         setContentView(R.layout.activity_history_page);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -56,5 +67,9 @@ public class HistoryPage extends AppCompatActivity implements AdapterView.OnItem
         if(news.getNews_pictures().length > 0)
             intent.putExtra("image", news.getNews_pictures()[0]);
         startActivity(intent);
+    }
+
+    private int getThemeId() {
+        return config.getInt("theme_id", 0);
     }
 }

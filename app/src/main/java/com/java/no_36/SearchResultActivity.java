@@ -1,6 +1,7 @@
 package com.java.no_36;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.app.SearchManager;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -23,6 +25,7 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
     private String SearchContent;
     NewsBriefUtils newsBriefUtils;
     List<NewsBriefBean> listNewsBriefBean;
+    private SharedPreferences config;
 
     private Handler mHandler = new Handler()
     {
@@ -37,6 +40,12 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        config = getSharedPreferences("config", MODE_PRIVATE);
+        int themeId = getThemeId();
+        if (themeId != 0) {
+            setTheme(themeId);
+        }
         setContentView(R.layout.activity_search_result);
         SearchContent = getIntent().getStringExtra(SearchManager.QUERY);
 
@@ -70,5 +79,9 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
         if(news.getNews_pictures().length > 0)
             intent.putExtra("image", news.getNews_pictures()[0]);
         startActivity(intent);
+    }
+
+    private int getThemeId() {
+        return config.getInt("theme_id", 0);
     }
 }

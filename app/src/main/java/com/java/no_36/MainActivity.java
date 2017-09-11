@@ -34,12 +34,20 @@ public class MainActivity extends AppCompatActivity
     /* add by lwt */
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
+    private SharedPreferences config;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         // auto-gen start
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        config = getSharedPreferences("config", MODE_PRIVATE);
+            int themeId = getThemeId();
+            if (themeId != 0) {
+                setTheme(themeId);
+            }
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -112,11 +120,23 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, CollectPage.class);
             startActivity(intent);
         } else if (id == R.id.nav_night) {
+            boolean isNightMode = getMode();
+            isNightMode = !isNightMode;
+            setMode(isNightMode);
+            int themeId;
+            if (isNightMode) {
+                themeId = R.style.APPTheme_NightTheme;
+            }else {
+                themeId = R.style.APPTheme_DayTheme;
+            }
+
+            setThemeId(themeId);
+            this.recreate();
 
         } else if (id == R.id.nav_text) {
-            CommonUtils.setTextMode(true);
-        } else if (id == R.id.nav_picture) {
-            CommonUtils.setTextMode(false);
+            boolean isTextMode = CommonUtils.getTextMode();
+            isTextMode = !isTextMode;
+            CommonUtils.setTextMode(isTextMode);
         } else if (id == R.id.nav_shield) {
 
         } else if(id == R.id.nav_history) {
@@ -150,6 +170,26 @@ public class MainActivity extends AppCompatActivity
         //将TabLayout和ViewPager关联起来。
         mTabLayout.setupWithViewPager(mViewPager);
     }
+
+    private void setThemeId(int themeId) {
+        SharedPreferences.Editor editor = config.edit();
+        editor.putInt("theme_id", themeId);
+        editor.commit();
+    }
+
+    private int getThemeId() {
+        return config.getInt("theme_id", 0);
+    }
+    private void setMode(boolean isNightMode) {
+        SharedPreferences.Editor editor = config.edit();
+        editor.putBoolean("is_night_mode", isNightMode);
+        editor.commit();
+    }
+
+    private boolean getMode() {
+        return config.getBoolean("is_night_mode", false);
+    }
+
 
 
 }

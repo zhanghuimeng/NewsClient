@@ -2,6 +2,7 @@ package com.java.no_36;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -26,6 +28,7 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
     private ListView mlistview;
     NewsBriefUtils newsBriefUtils;
     List<NewsBriefBean> listNewsBriefBean;
+    private SharedPreferences config;
 
     private Handler mHandler = new Handler()
     {
@@ -40,7 +43,15 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        config = getSharedPreferences("config", MODE_PRIVATE);
+        int themeId = getThemeId();
+        if (themeId != 0) {
+            setTheme(themeId);
+        }
         setContentView(R.layout.activity_type_page);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         this.mintent = getIntent();
         this.type_name = mintent.getDataString();
@@ -92,6 +103,10 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
         if(news.getNews_pictures().length > 0)
             intent.putExtra("image", news.getNews_pictures()[0]);
         startActivity(intent);
+    }
+
+    private int getThemeId() {
+        return config.getInt("theme_id", 0);
     }
 
 }
