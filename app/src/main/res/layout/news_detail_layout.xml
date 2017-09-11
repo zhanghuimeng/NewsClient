@@ -29,6 +29,14 @@
             android:layout_margin="10dp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/jump_url_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查看原文"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"/>
     </LinearLayout>
 
 </ScrollView>

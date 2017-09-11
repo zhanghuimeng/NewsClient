@@ -29,7 +29,7 @@ public class NewsBean
     private String news_title;
     private String news_url; // 实际的新闻URL
     private String[] news_video;
-    private String[] organizations;
+    private Keyword[] organizations;
     private Keyword[] persons;
     private int repeat_id;
     private String segged_p_list_of_content;
@@ -104,8 +104,8 @@ public class NewsBean
     public void setNews_video(String[] news_video) { this.news_video = news_video; }
     public String[] getNews_video() { return news_video; }
 
-    public void setOrganizations(String[] organizations) { this.organizations = organizations; }
-    public String[] getOrganizations() { return organizations; }
+    public void setOrganizations(Keyword[] organizations) { this.organizations = organizations; }
+    public Keyword[] getOrganizations() { return organizations; }
 
     public void setPersons(Keyword[] persons) { this.persons = persons; }
     public Keyword[] getPersons() { return persons; }
