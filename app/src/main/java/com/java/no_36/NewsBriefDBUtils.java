@@ -140,6 +140,19 @@ public class NewsBriefDBUtils
         return setBeans(cursor);
     }
 
+    public int get_isread(String id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String selection = "news_id=?";
+        String[] selectionArgs = new String[]{id};
+        Cursor cursor = db.query(NewsBriefDBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        if(cursor != null && cursor.getCount()>0) {
+            cursor.moveToNext();
+            return cursor.getInt(11);
+        }
+
+        return 0;
+    }
+
     final static String DELIMITER = ",";
 
     private String joinObject(Object[] array, String delimiter)

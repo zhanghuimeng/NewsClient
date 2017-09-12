@@ -25,13 +25,14 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
     NewsBriefUtils newsBriefUtils;
     List<NewsBriefBean> listNewsBriefBean;
     private SharedPreferences config;
+    NewsBriefAdapter newsAdapter;
 
     private Handler mHandler = new Handler()
     {
         public void handleMessage(android.os.Message msg)
         {
             listNewsBriefBean = (List<NewsBriefBean>) msg.obj;
-            NewsBriefAdapter newsAdapter = new NewsBriefAdapter(SearchResultActivity.this, listNewsBriefBean);
+            newsAdapter = new NewsBriefAdapter(SearchResultActivity.this, listNewsBriefBean);
             mlistview.setAdapter(newsAdapter);
         };
     };
@@ -69,6 +70,11 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         NewsBriefBean news = (NewsBriefBean) adapterView.getItemAtPosition(position);
+        NewsBriefDBUtils newsBriefDBUtils = new NewsBriefDBUtils(this);
+        newsBriefDBUtils.update_isvisit(news.getNews_id());
+        news.setNews_isread(1);
+        newsAdapter.setSelectedPosition(position);
+        newsAdapter.notifyDataSetInvalidated();
         String url = news.getNews_url();
         Intent intent = new Intent(this, NewsPage.class);
         intent.setData(Uri.parse(url));
@@ -83,6 +89,5 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
     private int getThemeId() {
         return config.getInt("theme_id", R.style.APPTheme_DayTheme);
     }
-
 
 }

@@ -137,7 +137,7 @@ public class NewsBriefUtils
             bean.setNews_url(json.getString("news_URL"));
             bean.setNews_video(json.getString("news_Video").split("\\s|;"));
             bean.setNews_intro(json.getString("news_Intro"));
-            bean.setNews_isread(0);
+            bean.setNews_isread(new NewsBriefDBUtils(context).get_isread(json.getString("news_ID")));
             bean.setScore();
             Log.i("NewsBriefUtils", bean.getNews_url());
             arraylistNews.add(bean);

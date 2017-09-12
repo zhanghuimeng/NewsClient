@@ -22,6 +22,9 @@ public class NewsBriefAdapter extends BaseAdapter
     private LayoutInflater mLayoutInflater;
     private List<NewsBriefBean> mDatas;
     private Context mContext;
+    private int selectedPosition = 0;// 选中的位置
+
+
 
     // 用构造器获取传递过来的数据
     public NewsBriefAdapter(Context context, List<NewsBriefBean> listNewsBean)
@@ -29,6 +32,10 @@ public class NewsBriefAdapter extends BaseAdapter
         this.mLayoutInflater = LayoutInflater.from(context);
         this.mDatas = listNewsBean;
         this.mContext = context;
+    }
+
+    public void setSelectedPosition(int position) {
+        selectedPosition = position;
     }
 
     @Override
@@ -55,6 +62,9 @@ public class NewsBriefAdapter extends BaseAdapter
         ViewHolder viewHolder;
         NewsBriefBean bean= mDatas.get(position);
         int isread = bean.getNews_isread();
+        if (selectedPosition == position) {
+            isread = 1;
+        }
         if (isread == 1)
         {
             convertView = mLayoutInflater.inflate(R.layout.news_read_brief, null);

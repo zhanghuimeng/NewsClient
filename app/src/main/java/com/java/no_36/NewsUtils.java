@@ -148,7 +148,13 @@ public class NewsUtils
 
         try {
             // 并不知道实际上是怎样的
-            bean.setOrganizations(json.getString("organizations").split(";|\\s"));
+            JSONArray org_array = json.getJSONArray("organizations");
+            Keyword[] orgs = new Keyword[org_array.length()];
+            for (int i = 0; i < org_array.length(); i++) {
+                JSONObject word = org_array.getJSONObject(i);
+                orgs[i] = new Keyword(word.getString("word"), word.getInt("count"));
+            }
+            bean.setOrganizations(orgs);
         } catch (Exception e) { e.printStackTrace(); }
 
         try {
