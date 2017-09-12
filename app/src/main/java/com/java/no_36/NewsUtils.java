@@ -50,7 +50,7 @@ public class NewsUtils
                     InputStream is = conn.getInputStream();
                     String result = StreamUtils.convertStream(is);
                     json = new JSONObject(result);
-                    mCache.put(news_id, json, SAVE_TIME); // 存入缓存中
+                    mCache.put(news_id, json); // 存入缓存中
                     is.close();
                 }
 
@@ -176,6 +176,10 @@ public class NewsUtils
         try { bean.setWord_count_of_title(json.getInt("wordCountOfTitle")); }
         catch (Exception e) { e.printStackTrace(); }
 
+
+        if(bean.getNews_pictures().length == 0 || bean.getNews_pictures()[0] == "");
+            bean.setNews_pictures(Crawl.get_picture(bean.getKeywords()[0].word));
+        System.out.println(bean.getNews_pictures().length);
         return bean;
     }
 }

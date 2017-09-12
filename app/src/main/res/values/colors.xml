@@ -3,15 +3,4 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
-    <color name="night_mode_color">#EAEAEA</color>
-    <color name="night_mode_dark_color">#EE3B3B</color>
-    <color name="text_color">#9932CC</color>
-    <color name="main_bg_color">#FFFFFF</color>
-
-
-    <color name="night_mode_color_night">#7D4112</color>
-    <color name="night_mode_dark_color_night">#7D4112</color>
-    <color name="text_color_night">#FFFFFF</color>
-    <color name="main_bg_color_night">#000000</color>
 </resources>
