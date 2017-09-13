@@ -3,8 +3,10 @@ package com.java.no_36;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;

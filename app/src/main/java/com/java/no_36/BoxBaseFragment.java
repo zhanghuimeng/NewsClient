@@ -92,6 +92,8 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 switch (scrollState) {
                     case AbsListView.OnScrollListener.SCROLL_STATE_IDLE: // 空闲状态
+                        // 设置滚动状态
+                        newsAdapter.setScrollState(false);
                         // 判断当前listview滚动的位置
                         // 获取最后一条可见条目在集合里面的位置
                         int lastVisiblePosition = mlistview.getLastVisiblePosition();
@@ -103,8 +105,10 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
                         }
                         break;
                     case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL: // 触摸状态
+                        newsAdapter.setScrollState(true);
                         break;
                     case AbsListView.OnScrollListener.SCROLL_STATE_FLING: // 惯性滑行状态
+                        newsAdapter.setScrollState(true);
                         break;
                     default:
                         break;
@@ -188,6 +192,8 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
                             }
                         }
                     });
+
+                    // 现在，需要执行对关键词的屏蔽
                 }
             }
         }).start();

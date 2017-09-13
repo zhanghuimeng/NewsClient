@@ -24,7 +24,11 @@ public class NewsBriefAdapter extends BaseAdapter
     private Context mContext;
     private int selectedPosition = 0;// 选中的位置
 
-
+    // 用于滑动中不加载数据
+    private  boolean scrollState = false;
+    public void setScrollState(boolean scrollState) {
+        this.scrollState = scrollState;
+    }
 
     // 用构造器获取传递过来的数据
     public NewsBriefAdapter(Context context, List<NewsBriefBean> listNewsBean)

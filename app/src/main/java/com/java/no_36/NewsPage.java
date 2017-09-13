@@ -245,12 +245,50 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
         return config.getInt("theme_id", R.style.APPTheme_DayTheme);
     }
 
-    private void setLayout(NewsBean bean)
+    private Handler AddPicHandler = new Handler()
+    {
+        public void handleMessage(android.os.Message msg)
+        {
+            GlideImageView iv = (GlideImageView) findViewById(R.id.detail_image);
+            String[] pictures = (String[]) msg.obj;
+            if (pictures != null && pictures.length > 0)
+            {
+                iv.setImage_url(pictures[0]);
+                Log.i("setLayout", pictures[0]);
+            }
+        };
+    };
+
+    private void setLayout(final NewsBean bean)
     {
         GlideImageView iv = (GlideImageView) findViewById(R.id.detail_image);
         String[] news_pictures = bean.getNews_pictures();
-        if (news_pictures != null && news_pictures.length > 0)
+        if (news_pictures != null && news_pictures.length > 0 && news_pictures[0].length() > 0)
             iv.setImage_url(news_pictures[0]);
+        else // 设置补充图片，因为涉及到网络，必须重新开一个线程
+        {
+            Log.i("setLayout", "正在设置补充图片");
+            new Thread(new Runnable() {
+
+                @Override
+                public void run()
+                {
+                    String[] pictures = null;
+                    try
+                    {
+                        pictures = Crawl.get_picture(bean.getKeywords());
+                        Message message = Message.obtain();
+                        message.obj = pictures;
+                        AddPicHandler.sendMessage(message);
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+        }
 
         TextView title = (TextView) findViewById(R.id.detail_title);
         title.setText(bean.getNews_title());

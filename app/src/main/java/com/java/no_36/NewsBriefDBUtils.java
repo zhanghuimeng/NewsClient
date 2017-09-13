@@ -28,11 +28,10 @@ public class NewsBriefDBUtils
     // 保存新闻到数据库中
     public void saveNews(ArrayList<NewsBriefBean> arrayList)
     {
-        SQLiteDatabase sqLite = dbHelper.getWritableDatabase();
+        SQLiteDatabase sqLite = dbHelper.getReadableDatabase();
         for(NewsBriefBean bean : arrayList)
         {
             ContentValues value = new ContentValues();
-
             value.put("news_id", bean.getNews_id());
             value.put("lang_type", bean.getLang_type());
             value.put("news_class_tag", bean.getNews_class_tag());
