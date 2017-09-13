@@ -53,6 +53,9 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
         mview = (View)inflater.inflate(R.layout.content_main,container,false);
         mContext = getActivity();
 
+        // 测试屏蔽
+        // CommonUtils.addScreenedKeyword("货币");
+
         loading = (LinearLayout) mview.findViewById(R.id.load_more_linearlayout);
         setListViewScroll();
         return mview;
@@ -123,7 +126,9 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
         });
 
         // 先试图从数据库中获取缓存(<=PAGE_SIZE条)的新闻数据展示到listview
-        listNewsBriefBean = newsDatabase.getNews(PAGE_SIZE, page++, false);
+        // 外面包了一层筛选关键词
+        while (listNewsBriefBean == null || listNewsBriefBean.size() == 0)
+            listNewsBriefBean = CommonUtils.screenList(newsDatabase.getNews(PAGE_SIZE, page++, false));
         Log.e("从数据库中获取缓存", String.valueOf(listNewsBriefBean.size()));
 
         if (listNewsBriefBean != null && listNewsBriefBean.size() > 0)
@@ -139,14 +144,18 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
             public void run()
             {
                 // 如果没能从数据库中获取信息，就从网络上调取
-                if (listNewsBriefBean == null || listNewsBriefBean.size() == 0) {
-                    listNewsBriefBean = NewsBriefUtils.getNetNewsBrief(mContext, 1, 20);
-                    if (listNewsBriefBean == null || listNewsBriefBean.size() == 0)
-                        return;
+                // 同时加了关键词过滤
+                while (listNewsBriefBean == null || listNewsBriefBean.size() == 0) {
+                    listNewsBriefBean = CommonUtils.screenList(NewsBriefUtils.getNetNewsBrief(mContext, 1, 20));
                     page++;
-                    Message message = Message.obtain();
-                    mHandler.sendMessage(message);
                 }
+
+                // 说明大概没网了
+                if (listNewsBriefBean == null || listNewsBriefBean.size() == 0)
+                    return;
+
+                Message message = Message.obtain();
+                mHandler.sendMessage(message);
 
                 // 从网络上缓存
                 for (int i = CommonUtils.getCachedBrief() + 1; i <= 500; i++)
@@ -168,32 +177,31 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
             @Override
             public void run() {
                 if(isAdded()) {
+                    // 现在，需要执行对关键词的屏蔽
+                    List<NewsBriefBean> new_list_to_add = newsDatabase.getNews(PAGE_SIZE, page, false);
+                    final List<NewsBriefBean> screened_list = CommonUtils.screenList(new_list_to_add);
+                    // screened_list现在应该存放了全部筛过的新闻
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
                             loading.setVisibility(View.INVISIBLE);
                             if (newsAdapter == null) {
                                 if (listNewsBriefBean == null) {
-                                    listNewsBriefBean = newsDatabase.getNews(PAGE_SIZE, page, false);
+                                    listNewsBriefBean = screened_list;
                                 } else {
-                                    listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page, false));
+                                    listNewsBriefBean.addAll(screened_list);
                                 }
-                                if (newsAdapter != null) {
-                                    newsAdapter = new NewsBriefAdapter(getActivity().getApplicationContext(), listNewsBriefBean);
-                                    mlistview.setAdapter(newsAdapter);
-                                }
+                                newsAdapter = new NewsBriefAdapter(getActivity().getApplicationContext(), listNewsBriefBean);
+                                mlistview.setAdapter(newsAdapter);
                             } else // adapter存在的话，通知更新（listNewsBriefBean必然也不为空了）
                             {
-                                listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page, false));
+                                listNewsBriefBean.addAll(screened_list);
                                 // 测试：加载某一种类的新闻（由于开始加载部分的没有改，所以前20条会返回奇怪的东西……
                                 // 总之像下面这样调用就可以返回固定种类的新闻了）
-                            /* listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page,
-                                    new String[]{"1", "3"}, false)); */
+                                // listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page, new String[]{"1", "3"}, false));
                                 newsAdapter.notifyDataSetChanged();
                             }
                         }
                     });
-
-                    // 现在，需要执行对关键词的屏蔽
                 }
             }
         }).start();
