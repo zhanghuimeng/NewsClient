@@ -1,6 +1,6 @@
 package com.java.no_36;
 
-import android.app.ActionBar;
+import android.view.View.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -15,10 +15,12 @@ import android.widget.ListView;
 import android.view.Window;
 import java.util.ArrayList;
 
-public class HistoryPage extends AppCompatActivity implements AdapterView.OnItemClickListener{
+public class HistoryPage extends AppCompatActivity implements AdapterView.OnItemClickListener, OnClickListener{
     ArrayList<NewsBriefBean> arraylistHistorys;
     private ListView mlistview;
     private SharedPreferences config;
+    FloatingActionButton tts_Button;
+    NewsHistoryAdapter newsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,24 +37,18 @@ public class HistoryPage extends AppCompatActivity implements AdapterView.OnItem
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        tts_Button = (FloatingActionButton) findViewById(R.id.fab_history);
+        tts_Button.setOnClickListener(this);
 
         mlistview = (ListView) findViewById(R.id.list_news_his);
         gethistory();
-        NewsHistoryAdapter newsAdapter = new NewsHistoryAdapter(this, arraylistHistorys);
+        newsAdapter = new NewsHistoryAdapter(this, arraylistHistorys);
         mlistview.setAdapter(newsAdapter);
         mlistview.setOnItemClickListener(this);
     }
 
     void gethistory() {
-        arraylistHistorys = new NewsBriefDBUtils(HistoryPage.this).getHistory();
+        arraylistHistorys = new HistoryDBUtils(HistoryPage.this).getHistorys();
     }
 
     @Override
@@ -67,6 +63,19 @@ public class HistoryPage extends AppCompatActivity implements AdapterView.OnItem
         if(news.getNews_pictures().length > 0)
             intent.putExtra("image", news.getNews_pictures()[0]);
         startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fab_history:
+                new HistoryDBUtils(this).deleteHistorys();
+                arraylistHistorys.clear();
+                newsAdapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
+        }
     }
 
     private int getThemeId() {

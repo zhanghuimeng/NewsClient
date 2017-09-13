@@ -36,18 +36,11 @@
             android:layout_width="124dp"
             android:layout_height="47dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:text="用户名"
+            android:text="新闻客户端"
             android:gravity="center"
             android:textSize="55px"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:layout_weight="0.74" />
-
-        <Button
-            android:id="@+id/button"
-            android:background="@drawable/buttom_shape"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:text="登录" />
     </LinearLayout>
 
 

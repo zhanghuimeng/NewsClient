@@ -64,9 +64,10 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
         NewsBriefDBUtils newsBriefDBUtils = new NewsBriefDBUtils(getActivity());
         newsBriefDBUtils.update_isvisit(news.getNews_id());
         news.setNews_isread(1);
+        HistoryDBUtils historyDBUtils = new HistoryDBUtils(getActivity());
+        historyDBUtils.saveHistorys(news.getNews_id());
         newsAdapter.setSelectedPosition(position);
-        newsAdapter.notifyDataSetInvalidated();
-
+        newsAdapter.notifyDataSetChanged();
         String url = news.getNews_url();
         Intent intent = new Intent(getActivity(), NewsPage.class);
         intent.setData(Uri.parse(url));

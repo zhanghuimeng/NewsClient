@@ -28,9 +28,17 @@ public class NewsBriefDBUtils
     // 保存新闻到数据库中
     public void saveNews(ArrayList<NewsBriefBean> arrayList)
     {
-        SQLiteDatabase sqLite = dbHelper.getWritableDatabase();
+        SQLiteDatabase sqLite = dbHelper.getReadableDatabase();
         for(NewsBriefBean bean : arrayList)
         {
+            Cursor cursor = sqLite.query(true, NewsBriefDBHelper.TABLE_NAME, new String[]{"news_id"}, "news_id=?",
+                    new String[]{bean.getNews_id()}, null, null, null, null);
+            if (cursor.getCount() > 0)
+            {
+                cursor.close();
+                continue;
+            }
+            cursor.close();
             ContentValues value = new ContentValues();
 
             value.put("news_id", bean.getNews_id());

@@ -22,7 +22,7 @@ public class NewsBriefAdapter extends BaseAdapter
     private LayoutInflater mLayoutInflater;
     private List<NewsBriefBean> mDatas;
     private Context mContext;
-    private int selectedPosition = 0;// 选中的位置
+    private int selectedPosition = -1;// 选中的位置
 
 
 

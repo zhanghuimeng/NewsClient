@@ -84,7 +84,7 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
         newsBriefDBUtils.update_isvisit(news.getNews_id());
         news.setNews_isread(1);
         newsAdapter.setSelectedPosition(position);
-        newsAdapter.notifyDataSetInvalidated();
+        newsAdapter.notifyDataSetChanged();
 
         String url = news.getNews_url();
         Intent intent = new Intent(this, NewsPage.class);

@@ -16,6 +16,7 @@ public class NewsBriefDBHelper extends SQLiteOpenHelper
 {
     public static final String TABLE_NAME = "news_brief";
     public static final String COLLECT_TABLE_NAME = "news_collect";
+    public static final String HISTORY_TABLE_NAME = "news_history";
 
     public NewsBriefDBHelper(Context context) {
         super(context, "NewsBrief", null, 1);
@@ -49,6 +50,13 @@ public class NewsBriefDBHelper extends SQLiteOpenHelper
                         "collect_time    DATETIME DEFAULT CURRENT_TIMESTAMP" +
                         ");";
         db.execSQL(collectsql);
+
+        String historysql =
+                "CREATE TABLE news_history(" +
+                        "news_id         VARCHAR(200)," +
+                        "read_time    DATETIME DEFAULT CURRENT_TIMESTAMP" +
+                        ");";
+        db.execSQL(historysql);
     }
 
     @Override
