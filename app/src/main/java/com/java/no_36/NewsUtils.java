@@ -37,7 +37,6 @@ public class NewsUtils
             {
                 URL url = new URL(String.format(GET_URL, news_id));
 
-                Log.i("NewsUtils", "Jumping to: " + url);
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
@@ -61,7 +60,6 @@ public class NewsUtils
             }
         }
 
-        Log.i("NewsUtils", "Get json: " + json);
 
         if (json == null)
             return null;

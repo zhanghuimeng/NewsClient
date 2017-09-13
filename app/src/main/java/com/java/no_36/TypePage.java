@@ -146,7 +146,6 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
 
         // 先试图从数据库中获取缓存(<=PAGE_SIZE条)的新闻数据展示到listview
         listNewsBriefBean = newsDatabase.getNews(PAGE_SIZE, page++, class_tag, false);
-        Log.e("从数据库中获取缓存", String.valueOf(listNewsBriefBean.size()));
 
         if (listNewsBriefBean != null && listNewsBriefBean.size() > 0)
         {
@@ -170,13 +169,6 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
                     mHandler.sendMessage(message);
                 }
 
-                // 从网络上缓存
-                for (int i = CommonUtils.getCachedBrief() + 1; i <= 500; i++)
-                {
-                    NewsBriefUtils.getNetTypeNewsBrief(TypePage.this, class_tag, i, 500);
-                    CommonUtils.setCachedBrief(i + 1);
-                }
-
             }
         }).start();
 
@@ -189,27 +181,26 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
         new Thread(new Runnable() {
             @Override
             public void run() {
+                final boolean isset;
+                List<NewsBriefBean> getNewBriefBean = newsDatabase.getNews(PAGE_SIZE, page, class_tag, false);
+                if(getNewBriefBean == null || getNewBriefBean.size() == 0)
+                    getNewBriefBean = NewsBriefUtils.getNetTypeNewsBrief(TypePage.this, class_tag, page, PAGE_SIZE);
+                if (listNewsBriefBean == null) {
+                    isset = false;
+                    listNewsBriefBean = getNewBriefBean;
+                }
+                else {
+                    isset = true;
+                    listNewsBriefBean.addAll(getNewBriefBean);
+                }
                 runOnUiThread(new Runnable() {
                     public void run() {
                         loading.setVisibility(View.INVISIBLE);
-                        if (newsAdapter == null) {
-                            if (listNewsBriefBean == null) {
-                                listNewsBriefBean = newsDatabase.getNews(PAGE_SIZE, page, class_tag, false);
-                            } else {
-                                listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page, class_tag, false));
-                            }
-                            if (newsAdapter != null) {
-                                newsAdapter = new NewsBriefAdapter(getApplicationContext(), listNewsBriefBean);
+                        if (newsAdapter != null) {
+                            if(isset)
+                                newsAdapter.notifyDataSetChanged();
+                            else
                                 mlistview.setAdapter(newsAdapter);
-                            }
-                        } else // adapter存在的话，通知更新（listNewsBriefBean必然也不为空了）
-                        {
-                            listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page, class_tag, false));
-                                // 测试：加载某一种类的新闻（由于开始加载部分的没有改，所以前20条会返回奇怪的东西……
-                                // 总之像下面这样调用就可以返回固定种类的新闻了）
-                            /* listNewsBriefBean.addAll(newsDatabase.getNews(PAGE_SIZE, page,
-                                    new String[]{"1", "3"}, false)); */
-                            newsAdapter.notifyDataSetChanged();
                         }
                     }
                 });

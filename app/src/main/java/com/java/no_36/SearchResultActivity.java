@@ -179,7 +179,7 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
                     isset = true;
                     listNewsBriefBean.addAll(NewsBriefUtils.getNetSearchNewsBrief(SearchResultActivity.this, SearchContent, page, PAGE_SIZE));
                 }
-                    runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     public void run() {
                         loading.setVisibility(View.INVISIBLE);
                         if (newsAdapter != null) {

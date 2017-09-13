@@ -109,7 +109,6 @@ public class ClassifyFragment extends Fragment implements AdapterView.OnItemClic
                     confirmselected(false);
                 break;
             case R.id.get_cancle:
-                Log.i("cancle", "select cancle");
                 cancleselected();
                 break;
             default:
@@ -184,7 +183,6 @@ public class ClassifyFragment extends Fragment implements AdapterView.OnItemClic
     private void cancleselected() {
         newsAdapter.clearMap();
         newsAdapter.setData(mtitles);
-        Log.i("mtitles", mtitles.toString());
         editState = false;
         newsAdapter.setState(editState);
         newsAdapter.notifyDataSetChanged();

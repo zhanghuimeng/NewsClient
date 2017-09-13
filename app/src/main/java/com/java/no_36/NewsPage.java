@@ -83,7 +83,7 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
     private InitListener myInitListener = new InitListener() {
         @Override
         public void onInit(int code) {
-            Log.d("mySynthesiezer:", "InitListener init() code = " + code);
+
         }
     };
 
@@ -185,11 +185,11 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
         public void onCompleted(SpeechError error) {
             if(error!=null)
             {
-                Log.d("complete code:", error.getErrorCode()+"");
+
             }
             else
             {
-                Log.d("complete code:", "0");
+
             }
         }
         public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
@@ -212,7 +212,6 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
                     //设置音量
                     mySynthesizer.setParameter(SpeechConstant.VOLUME, "50");
                     int code = mySynthesizer.startSpeaking(text, mTtsListener);
-                    Log.d("start code:", code + "");
                     isclicked = true;
                 }
                 break;
@@ -263,7 +262,7 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
     {
         GlideImageView iv = (GlideImageView) findViewById(R.id.detail_image);
         String[] news_pictures = bean.getNews_pictures();
-        if (news_pictures != null && news_pictures.length > 0) {
+        if (news_pictures != null && news_pictures.length > 0 && news_pictures[0].length() > 0) {
             iv.setImage_url(news_pictures[0]);
             Log.i("setLayout", news_pictures[0]);
         }

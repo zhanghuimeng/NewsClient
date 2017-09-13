@@ -46,7 +46,6 @@ public class NewsBriefUtils
                 // 获取请求到的流信息
                 InputStream is = conn.getInputStream();
                 String result = StreamUtils.convertStream(is);
-                Log.i("NewsBriefUtils", result);
                 is.close();
                 return setNetBeans(context, result, true);
             }
@@ -73,7 +72,6 @@ public class NewsBriefUtils
                 // 获取请求到的流信息
                 InputStream is = conn.getInputStream();
                 String result = StreamUtils.convertStream(is);
-                Log.i("NewsBriefUtils", result);
                 is.close();
                 return setNetBeans(context, result, true);
             }
@@ -99,7 +97,6 @@ public class NewsBriefUtils
                 // 获取请求到的流信息
                 InputStream is = conn.getInputStream();
                 String result = StreamUtils.convertStream(is);
-                Log.i("NewsBriefUtils", result);
                 is.close();
                 return setNetBeans(context, result, false);
             }
@@ -139,7 +136,6 @@ public class NewsBriefUtils
             bean.setNews_intro(json.getString("news_Intro"));
             bean.setNews_isread(new NewsBriefDBUtils(context).get_isread(json.getString("news_ID")));
             bean.setScore();
-            Log.i("NewsBriefUtils", bean.getNews_url());
             arraylistNews.add(bean);
         }
         } catch (Exception e) {
