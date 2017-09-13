@@ -140,6 +140,9 @@ public class MainActivity extends AppCompatActivity
             isTextMode = !isTextMode;
             CommonUtils.setTextMode(isTextMode);
         } else if (id == R.id.nav_shield) {
+            // 屏蔽设置
+            Intent intent = new Intent(this, ShieldSetActivity.class);
+            startActivity(intent);
 
         } else if(id == R.id.nav_history) {
             Intent intent = new Intent(this, HistoryPage.class);

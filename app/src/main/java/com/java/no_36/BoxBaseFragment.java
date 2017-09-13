@@ -56,8 +56,12 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
         // 测试屏蔽
         // CommonUtils.addScreenedKeyword("货币");
 
+        Log.e("BaseFrag", "onCreate");
+
         loading = (LinearLayout) mview.findViewById(R.id.load_more_linearlayout);
         setListViewScroll();
+
+        Log.e("BaseFrag", "after setListViewScroll");
         return mview;
     }
 
@@ -125,11 +129,20 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
             }
         });
 
+        Log.e("BaseFrag", "before accessing the database");
+
         // 先试图从数据库中获取缓存(<=PAGE_SIZE条)的新闻数据展示到listview
         // 外面包了一层筛选关键词
         while (listNewsBriefBean == null || listNewsBriefBean.size() == 0)
-            listNewsBriefBean = CommonUtils.screenList(newsDatabase.getNews(PAGE_SIZE, page++, false));
-        Log.e("从数据库中获取缓存", String.valueOf(listNewsBriefBean.size()));
+        {
+            List<NewsBriefBean> list = newsDatabase.getNews(PAGE_SIZE, page++, false);
+            if (list == null || list.size() == 0) // 从数据库中获取不到任何信息了
+                break;
+            listNewsBriefBean = CommonUtils.screenList(list);
+            Log.e("BaseFrag", "Accessing " + page);
+        }
+
+        Log.e("从数据库中获取缓存", "a");
 
         if (listNewsBriefBean != null && listNewsBriefBean.size() > 0)
         {
@@ -146,7 +159,10 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
                 // 如果没能从数据库中获取信息，就从网络上调取
                 // 同时加了关键词过滤
                 while (listNewsBriefBean == null || listNewsBriefBean.size() == 0) {
-                    listNewsBriefBean = CommonUtils.screenList(NewsBriefUtils.getNetNewsBrief(mContext, 1, 20));
+                    List<NewsBriefBean> list = NewsBriefUtils.getNetNewsBrief(mContext, 1, 20);
+                    if (list == null || list.size() == 0) // 没网了
+                        break;
+                    listNewsBriefBean = CommonUtils.screenList(list);
                     page++;
                 }
 
@@ -160,7 +176,8 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
                 // 从网络上缓存
                 for (int i = CommonUtils.getCachedBrief() + 1; i <= 500; i++)
                 {
-                    NewsBriefUtils.getNetNewsBrief(mContext, i, 500);
+                    // NewsBriefUtils.getNetNewsBrief(mContext, i, 500);
+                    NewsBriefUtils.getNetNewsBrief_onlyDB(mContext, i, 500);
                     CommonUtils.setCachedBrief(i + 1);
                 }
 

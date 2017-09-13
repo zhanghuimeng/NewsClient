@@ -49,7 +49,6 @@ public class NewsBriefDBUtils
         sqLite.close();
     }
 
-
     // 删除数据库数据
     public void deleteNews ()
     {

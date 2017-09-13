@@ -10,7 +10,10 @@ import java.text.SimpleDateFormat;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class NewsBriefUtils
@@ -56,6 +59,62 @@ public class NewsBriefUtils
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void getNetNewsBrief_onlyDB(Context context, int pageNo, int pageSize)
+    {
+        try
+        {
+            URL url = new URL(String.format(NEWS_BRIEF_URL, pageNo, pageSize));
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(20 * 1000);
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == 200)
+            {
+                // 获取请求到的流信息
+                InputStream is = conn.getInputStream();
+                String result = StreamUtils.convertStream(is);
+                Log.i("NewsBriefUtils", result);
+                is.close();
+
+                // 把JS存到数据库里
+                NewsBriefDBHelper dbHelper = new NewsBriefDBHelper(context);
+                NewsBriefDBUtils newsBriefDBUtils = new NewsBriefDBUtils(context);
+                SQLiteDatabase sqLite = dbHelper.getReadableDatabase();
+                try{
+                    JSONObject root_json = new JSONObject(result);
+                    JSONArray jsonArray  = root_json.getJSONArray("list");
+                    for (int i = 0; i < jsonArray.length(); i ++ )
+                    {
+                        JSONObject json = jsonArray.getJSONObject(i);
+                        ContentValues value = new ContentValues();
+                        value.put("news_id", json.getString("news_ID"));
+                        value.put("lang_type", json.getString("lang_Type"));
+                        value.put("news_class_tag", json.getString("newsClassTag"));
+                        value.put("news_author", json.getString("news_Author"));
+                        value.put("news_pictures", TextUtils.join(NewsBriefDBUtils.DELIMITER, json.getString("news_Pictures").split("\\s|;")));
+                        value.put("news_source", json.getString("news_Source"));
+                        Date time = null;
+                        try { time = sdf.parse(json.getString("news_Time").substring(0, 8)); }
+                        catch (Exception e) { time = sdf.parse("20150101"); }
+                        value.put("news_time", time.getTime());
+                        value.put("news_title", json.getString("news_Title"));
+                        value.put("news_url", json.getString("news_URL"));
+                        value.put("news_video", TextUtils.join(NewsBriefDBUtils.DELIMITER, json.getString("news_Video").split("\\s|;")));
+                        value.put("news_intro", json.getString("news_Intro"));
+                        value.put("news_isread", newsBriefDBUtils.get_isread(json.getString("news_ID")));
+                        sqLite.insert(NewsBriefDBHelper.TABLE_NAME, null, value);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

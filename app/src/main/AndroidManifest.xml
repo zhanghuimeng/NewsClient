@@ -107,7 +107,11 @@
         <activity
             android:name=".TypePage"
             android:label="@string/title_activity_type_page"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".ShieldSetActivity"
+            android:label="@string/title_activity_shield_page"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity android:name=".SearchResultActivity"
             android:parentActivityName=".MainActivity">

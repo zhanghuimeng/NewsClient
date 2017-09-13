@@ -9,6 +9,10 @@
     <string name="title_activity_news_page">NewsPage</string>
     <string name="share">分享</string>
     <string name="title_activity_history_page">HistoryPage</string>
+    <string name="title_activity_shield_page">关键词屏蔽</string>
     <string name="title_activity_collect_page">CollectPage</string>
     <string name="title_activity_type_page">TypePage</string>
+
+    <string name="add_shield_to_adding">添加</string>
+    <string name="add_shield_added">确认</string>
 </resources>

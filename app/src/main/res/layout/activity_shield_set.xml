@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.ns.developer.tagview.widget.TagCloudLinkView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/shield_cloud_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:padding="4dp"
+        android:background="#ffffff"
+        app:isDeletable="true"
+        app:tagLayoutColor="#0000ff"
+        app:tagTextSize="8sp"
+        app:tagTextColor="#ffffff"
+        app:deletableTextSize="8sp"
+        app:deletableTextColor="#ff9acd32"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="0dp"
+            android:id="@+id/add_shield_edttxt"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="invisible"/>
+        <Button
+            android:id="@+id/add_shield_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/add_shield_to_adding"
+            android:background="@drawable/buttom_shape"/>
+    </LinearLayout>
+
+</LinearLayout>
