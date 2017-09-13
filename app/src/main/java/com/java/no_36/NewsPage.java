@@ -75,6 +75,7 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
                 return;
             }
 
+            text = bean.getNews_content();
             setLayout(bean);
         };
     };
@@ -114,7 +115,8 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
         //处理语音合成关键类
         mySynthesizer = SpeechSynthesizer.createSynthesizer(this, myInitListener);
 
-
+        NewsBriefDBUtils newsBriefDBUtils = new NewsBriefDBUtils(this);
+        newsBriefDBUtils.update_isvisit(id);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -124,7 +126,6 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
                 mHandler.sendMessage(message);
             }
         }).start();
-
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -215,12 +216,6 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
                     isclicked = true;
                 }
                 break;
-            case R.id.jump_url_btn:
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(jumpURL));
-                startActivity(intent);
-                break;
             default:
                 break;
         }
@@ -252,10 +247,6 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
 
     private void setLayout(NewsBean bean)
     {
-        jumpURL = bean.getNews_url();
-        findViewById(R.id.jump_url_btn).setVisibility(View.VISIBLE);
-        findViewById(R.id.jump_url_btn).setOnClickListener(this);
-
         GlideImageView iv = (GlideImageView) findViewById(R.id.detail_image);
         String[] news_pictures = bean.getNews_pictures();
         if (news_pictures != null && news_pictures.length > 0)
@@ -307,4 +298,5 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
 
         return keywords;
     }
+
 }
