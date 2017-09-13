@@ -36,8 +36,7 @@ public class NewsBriefDBUtils
         for(NewsBriefBean bean : arrayList)
         {
             // 先查找新闻是否已存在
-
-            Cursor cursor = db.query(true, NewsBriefDBHelper.TABLE_NAME, new String[]{"news_id"}, "news_id=?",
+            Cursor cursor = db.query(false, NewsBriefDBHelper.TABLE_NAME, new String[]{"news_id"}, "news_id=?",
                     new String[]{bean.getNews_id()}, null, null, null, null);
             if (cursor.getCount() > 0)
             {

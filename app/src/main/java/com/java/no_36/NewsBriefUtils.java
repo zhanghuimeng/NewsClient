@@ -66,14 +66,14 @@ public class NewsBriefUtils extends AppCompatActivity
                     bean.setNews_video(json.getString("news_Video").split("\\s|;"));
                     bean.setNews_intro(json.getString("news_Intro"));
                     bean.setScore();
-                    int test;
+                    /*int test;
                     if(bean.getNews_source()=="新浪新闻")
                         test = 0;
                     if(bean.getNews_pictures().length == 0 || bean.getNews_pictures()[0] == "") {
                         get_keyword(bean, context);
                         bean.setNews_pictures(Crawl.get_picture(bean.getKeywords()[0].word));
                     }
-
+*/
                     arraylistNews.add(bean);
 
 
