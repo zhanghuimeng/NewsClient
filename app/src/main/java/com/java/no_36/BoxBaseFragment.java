@@ -3,8 +3,10 @@ package com.java.no_36;
 /**
  * Created by lwt on 17-9-5.
  */
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -37,6 +39,7 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
     private LinearLayout loading; // 在下侧显示正在加载
     private final int PAGE_SIZE = 20;
     private int page = 0;
+    private MsgReceiver msgReceiver; // 用来接收刷新信息
 
 
     private Handler mHandler = new Handler()
@@ -56,13 +59,92 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
         // 测试屏蔽
         // CommonUtils.addScreenedKeyword("货币");
 
-        Log.e("BaseFrag", "onCreate");
+        // 抄来的代码
+        // 注册onScrollListener
+        // 改为放在这里是为了刷新的时候不重建一遍
+        mlistview = (ListView) mview.findViewById(R.id.list_news_brief);
+        newsBriefUtils = new NewsBriefUtils();
+        newsDatabase = new NewsBriefDBUtils(mContext);
+
+        mlistview.setOnScrollListener(new AbsListView.OnScrollListener() {
+            // 当滚动状态放生改变时调用
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE: // 空闲状态
+                        // 设置滚动状态
+                        // 判断当前listview滚动的位置
+                        // 获取最后一条可见条目在集合里面的位置
+                        int lastVisiblePosition = mlistview.getLastVisiblePosition();
+                        System.out.println("最后一个可见条目的位置 = " + lastVisiblePosition);
+                        System.out.println("listViewBean的size = " + listNewsBriefBean.size());
+                        // 到了最后一个可见位置后继续查找
+                        if (lastVisiblePosition == listNewsBriefBean.size() - 1) {
+                            loadNextData(page++);
+                        }
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL: // 触摸状态
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_FLING: // 惯性滑行状态
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            // 滚动时调用
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+            }
+        });
 
         loading = (LinearLayout) mview.findViewById(R.id.load_more_linearlayout);
         setListViewScroll();
 
-        Log.e("BaseFrag", "after setListViewScroll");
         return mview;
+
+    }
+
+    // 为了unregister
+    // https://stackoverflow.com/questions/16616654/registering-and-unregistering-broadcastreceiver-in-a-fragment
+    // 据说在onResume里register，在onPause里unRegister比较好
+    @Override
+    public void onResume()
+    {
+        //动态注册广播接收器
+        msgReceiver = new MsgReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.java.no_36.REFRESH_SHIELD");
+        getActivity().registerReceiver(msgReceiver, intentFilter);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(msgReceiver);
+        super.onPause();
+    }
+
+    /**
+     * 广播接收器
+     * @author len
+     *
+     */
+    public class MsgReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // 重建这个界面
+            getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    listNewsBriefBean = null;
+                    page = 0;
+                    setListViewScroll();
+                }
+            });
+        }
+
     }
 
     @Override
@@ -88,49 +170,6 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
 
     private void setListViewScroll()
     {
-        mlistview = (ListView) mview.findViewById(R.id.list_news_brief);
-        newsBriefUtils = new NewsBriefUtils();
-        newsDatabase = new NewsBriefDBUtils(mContext);
-
-        // 抄来的代码
-        mlistview.setOnScrollListener(new AbsListView.OnScrollListener() {
-            // 当滚动状态放生改变时调用
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                switch (scrollState) {
-                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE: // 空闲状态
-                        // 设置滚动状态
-                        newsAdapter.setScrollState(false);
-                        // 判断当前listview滚动的位置
-                        // 获取最后一条可见条目在集合里面的位置
-                        int lastVisiblePosition = mlistview.getLastVisiblePosition();
-                        System.out.println("最后一个可见条目的位置 = " + lastVisiblePosition);
-                        System.out.println("listViewBean的size = " + listNewsBriefBean.size());
-                        // 到了最后一个可见位置后继续查找
-                        if (lastVisiblePosition == listNewsBriefBean.size() - 1) {
-                            loadNextData(page++);
-                        }
-                        break;
-                    case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL: // 触摸状态
-                        newsAdapter.setScrollState(true);
-                        break;
-                    case AbsListView.OnScrollListener.SCROLL_STATE_FLING: // 惯性滑行状态
-                        newsAdapter.setScrollState(true);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            // 滚动时调用
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-            }
-        });
-
-        Log.e("BaseFrag", "before accessing the database");
-
         // 先试图从数据库中获取缓存(<=PAGE_SIZE条)的新闻数据展示到listview
         // 外面包了一层筛选关键词
         while (listNewsBriefBean == null || listNewsBriefBean.size() == 0)

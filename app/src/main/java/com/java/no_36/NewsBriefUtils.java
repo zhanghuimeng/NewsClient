@@ -89,6 +89,8 @@ public class NewsBriefUtils
                     for (int i = 0; i < jsonArray.length(); i ++ )
                     {
                         JSONObject json = jsonArray.getJSONObject(i);
+                        if (newsBriefDBUtils.hasNewsAsID(json.getString("news_ID")))
+                            continue;
                         ContentValues value = new ContentValues();
                         value.put("news_id", json.getString("news_ID"));
                         value.put("lang_type", json.getString("lang_Type"));

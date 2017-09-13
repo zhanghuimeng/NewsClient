@@ -3,6 +3,7 @@ package com.java.no_36;
 import com.ns.developer.tagview.entity.*;
 import com.ns.developer.tagview.widget.TagCloudLinkView;;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,6 +30,15 @@ public class ShieldSetActivity extends AppCompatActivity implements View.OnClick
             view.add(new Tag(1, word));
 
         view.drawTags();
+
+        view.setOnTagDeleteListener(new TagCloudLinkView.OnTagDeleteListener() {
+            @Override
+            public void onTagDeleted(Tag tag, int i) {
+                String word = tag.getText();
+                if (CommonUtils.deleteScreenedKeyword(word))
+                    toRefresh = true;
+            }
+        });
 
         Button btn = (Button) findViewById(R.id.add_shield_btn);
         btn.setOnClickListener(this);
@@ -66,6 +76,12 @@ public class ShieldSetActivity extends AppCompatActivity implements View.OnClick
     protected void onDestroy() // 此时，向activity们发送广播，表示关键词屏蔽已经更新了
     {
         Log.e("shield activity", "onDestroy");
+        if (this.toRefresh)
+        {
+            Intent intent = new Intent("com.java.no_36.REFRESH_SHIELD");
+            sendBroadcast(intent);
+        }
+
         super.onDestroy();
     }
 

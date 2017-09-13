@@ -151,6 +151,23 @@ public class NewsBriefDBUtils
         return 0;
     }
 
+    /**
+     * 返回数据库中是否有以此ID存储的新闻
+     * @param id
+     * @return
+     */
+    public boolean hasNewsAsID(String id)
+    {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String selection = "news_id=?";
+        String[] selectionArgs = new String[]{id};
+        Cursor cursor = db.query(NewsBriefDBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        if(cursor != null && cursor.getCount()>0) {
+            return true;
+        }
+        return false;
+    }
+
     final static String DELIMITER = ",";
 
     private String joinObject(Object[] array, String delimiter)
