@@ -11,4 +11,5 @@
     <string name="title_activity_history_page">HistoryPage</string>
     <string name="title_activity_collect_page">CollectPage</string>
     <string name="title_activity_type_page">TypePage</string>
+    <string name="title_activity_shield_page">ShieldPage</string>
 </resources>

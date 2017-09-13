@@ -120,9 +120,15 @@ public class ClassifyFragment extends Fragment implements AdapterView.OnItemClic
     private void additems() {
         if(untitles.size() > 0) {
             editState = true;
-            newsAdapter.setData(untitles);
-            newsAdapter.setState(editState);
-            newsAdapter.notifyDataSetChanged();
+            if(isAdded()) {
+                getActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        newsAdapter.setData(untitles);
+                        newsAdapter.setState(editState);
+                        newsAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
             getOk.setVisibility(View.VISIBLE);
             getOk.setText("添加");
             getCancle.setVisibility(View.VISIBLE);
@@ -136,8 +142,14 @@ public class ClassifyFragment extends Fragment implements AdapterView.OnItemClic
     private void deleteitems() {
         if(mtitles.size()>0) {
             editState = true;
-            newsAdapter.setState(editState);
-            newsAdapter.notifyDataSetChanged();
+            if(isAdded()) {
+                getActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        newsAdapter.setState(editState);
+                        newsAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
             getOk.setVisibility(View.VISIBLE);
             getOk.setText("删除");
             getCancle.setVisibility(View.VISIBLE);

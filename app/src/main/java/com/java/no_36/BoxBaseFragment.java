@@ -60,14 +60,21 @@ public class BoxBaseFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        final int pos = position;
         NewsBriefBean news = (NewsBriefBean) adapterView.getItemAtPosition(position);
         NewsBriefDBUtils newsBriefDBUtils = new NewsBriefDBUtils(getActivity());
         newsBriefDBUtils.update_isvisit(news.getNews_id());
         news.setNews_isread(1);
         HistoryDBUtils historyDBUtils = new HistoryDBUtils(getActivity());
         historyDBUtils.saveHistorys(news.getNews_id());
-        newsAdapter.setSelectedPosition(position);
-        newsAdapter.notifyDataSetChanged();
+        if(isAdded()) {
+            getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    newsAdapter.setSelectedPosition(pos);
+                    newsAdapter.notifyDataSetChanged();
+                }
+            });
+        }
         String url = news.getNews_url();
         Intent intent = new Intent(getActivity(), NewsPage.class);
         intent.setData(Uri.parse(url));

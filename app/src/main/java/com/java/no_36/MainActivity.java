@@ -138,6 +138,8 @@ public class MainActivity extends AppCompatActivity
             isTextMode = !isTextMode;
             CommonUtils.setTextMode(isTextMode);
         } else if (id == R.id.nav_shield) {
+            Intent intent = new Intent(this, ShieldPage.class);
+            startActivity(intent);
 
         } else if(id == R.id.nav_history) {
             Intent intent = new Intent(this, HistoryPage.class);

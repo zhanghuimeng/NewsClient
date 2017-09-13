@@ -70,8 +70,12 @@ public class HistoryPage extends AppCompatActivity implements AdapterView.OnItem
         switch (v.getId()) {
             case R.id.fab_history:
                 new HistoryDBUtils(this).deleteHistorys();
-                arraylistHistorys.clear();
-                newsAdapter.notifyDataSetChanged();
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        arraylistHistorys.clear();
+                        newsAdapter.notifyDataSetChanged();
+                    }
+                });
                 break;
             default:
                 break;

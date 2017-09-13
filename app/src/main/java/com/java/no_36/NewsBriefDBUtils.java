@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.database.sqlite.SQLiteException;
 
 /**
  * 数据库工具类，封装对数据库进行增删改查的方法
@@ -28,34 +29,36 @@ public class NewsBriefDBUtils
     // 保存新闻到数据库中
     public void saveNews(ArrayList<NewsBriefBean> arrayList)
     {
-        SQLiteDatabase sqLite = dbHelper.getReadableDatabase();
-        for(NewsBriefBean bean : arrayList)
-        {
-            Cursor cursor = sqLite.query(true, NewsBriefDBHelper.TABLE_NAME, new String[]{"news_id"}, "news_id=?",
-                    new String[]{bean.getNews_id()}, null, null, null, null);
-            if (cursor.getCount() > 0)
-            {
+        try {
+            SQLiteDatabase sqLite = dbHelper.getReadableDatabase();
+            for (NewsBriefBean bean : arrayList) {
+                Cursor cursor = sqLite.query(true, NewsBriefDBHelper.TABLE_NAME, new String[]{"news_id"}, "news_id=?",
+                        new String[]{bean.getNews_id()}, null, null, null, null);
+                if (cursor.getCount() > 0) {
+                    cursor.close();
+                    continue;
+                }
                 cursor.close();
-                continue;
-            }
-            cursor.close();
-            ContentValues value = new ContentValues();
+                ContentValues value = new ContentValues();
 
-            value.put("news_id", bean.getNews_id());
-            value.put("lang_type", bean.getLang_type());
-            value.put("news_class_tag", bean.getNews_class_tag());
-            value.put("news_author", bean.getNews_author());
-            value.put("news_pictures", joinObject(bean.getNews_pictures(), DELIMITER));
-            value.put("news_source", bean.getNews_source());
-            value.put("news_time", bean.getNews_time().getTime());
-            value.put("news_title", bean.getNews_title());
-            value.put("news_url", bean.getNews_url());
-            value.put("news_video", joinObject(bean.getNews_video(), DELIMITER));
-            value.put("news_intro", bean.getNews_intro());
-            value.put("news_isread", bean.getNews_isread());
-            sqLite.insert(NewsBriefDBHelper.TABLE_NAME, null, value);
+                value.put("news_id", bean.getNews_id());
+                value.put("lang_type", bean.getLang_type());
+                value.put("news_class_tag", bean.getNews_class_tag());
+                value.put("news_author", bean.getNews_author());
+                value.put("news_pictures", joinObject(bean.getNews_pictures(), DELIMITER));
+                value.put("news_source", bean.getNews_source());
+                value.put("news_time", bean.getNews_time().getTime());
+                value.put("news_title", bean.getNews_title());
+                value.put("news_url", bean.getNews_url());
+                value.put("news_video", joinObject(bean.getNews_video(), DELIMITER));
+                value.put("news_intro", bean.getNews_intro());
+                value.put("news_isread", bean.getNews_isread());
+                sqLite.insert(NewsBriefDBHelper.TABLE_NAME, null, value);
+            }
+            sqLite.close();
+        } catch(SQLiteException e) {
+            e.printStackTrace();
         }
-        sqLite.close();
     }
 
 

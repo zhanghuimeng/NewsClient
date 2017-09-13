@@ -79,13 +79,17 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        final int pos = position;
         NewsBriefBean news = (NewsBriefBean) adapterView.getItemAtPosition(position);
         NewsBriefDBUtils newsBriefDBUtils = new NewsBriefDBUtils(this);
         newsBriefDBUtils.update_isvisit(news.getNews_id());
         news.setNews_isread(1);
-        newsAdapter.setSelectedPosition(position);
-        newsAdapter.notifyDataSetChanged();
-
+        runOnUiThread(new Runnable() {
+            public void run() {
+                newsAdapter.setSelectedPosition(pos);
+                newsAdapter.notifyDataSetChanged();
+            }
+        });
         String url = news.getNews_url();
         Intent intent = new Intent(this, NewsPage.class);
         intent.setData(Uri.parse(url));
