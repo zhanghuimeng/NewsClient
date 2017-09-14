@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -32,6 +33,7 @@ public class CollectPage extends AppCompatActivity implements AdapterView.OnItem
         setContentView(R.layout.activity_collect_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mlistview = (ListView) findViewById(R.id.list_news_collect);
         CollectDBUtils collectDatabase = new CollectDBUtils(this);
@@ -44,6 +46,16 @@ public class CollectPage extends AppCompatActivity implements AdapterView.OnItem
         }
 
         mlistview.setOnItemClickListener(this);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+        }
+        return true;
     }
 
     @Override

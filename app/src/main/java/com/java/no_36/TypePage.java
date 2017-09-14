@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AbsListView;
@@ -72,11 +73,21 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
 
         toolbar.setTitle(type_name);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         loading = (LinearLayout) findViewById(R.id.load_more_linearlayout);
 
         setListViewScroll();
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+        }
+        return true;
+    }
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         final int pos = position;
@@ -185,25 +196,27 @@ public class TypePage extends AppCompatActivity implements AdapterView.OnItemCli
                 List<NewsBriefBean> getNewBriefBean = newsDatabase.getNews(PAGE_SIZE, page, class_tag, false);
                 if(getNewBriefBean == null || getNewBriefBean.size() == 0)
                     getNewBriefBean = NewsBriefUtils.getNetTypeNewsBrief(TypePage.this, class_tag, page, PAGE_SIZE);
-                if (listNewsBriefBean == null) {
-                    isset = false;
-                    listNewsBriefBean = getNewBriefBean;
-                }
-                else {
-                    isset = true;
-                    listNewsBriefBean.addAll(getNewBriefBean);
-                }
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        loading.setVisibility(View.INVISIBLE);
-                        if (newsAdapter != null) {
-                            if(isset)
-                                newsAdapter.notifyDataSetChanged();
-                            else
-                                mlistview.setAdapter(newsAdapter);
-                        }
+                if(getNewBriefBean != null) {
+                    if (listNewsBriefBean == null) {
+                        isset = false;
+                        listNewsBriefBean = getNewBriefBean;
+                    } else {
+                        isset = true;
+                        listNewsBriefBean.addAll(getNewBriefBean);
                     }
-                });
+
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            loading.setVisibility(View.INVISIBLE);
+                            if (newsAdapter != null) {
+                                if (isset)
+                                    newsAdapter.notifyDataSetChanged();
+                                else
+                                    mlistview.setAdapter(newsAdapter);
+                            }
+                        }
+                    });
+                }
             }
         }).start();
     }

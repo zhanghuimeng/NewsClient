@@ -12,7 +12,7 @@
         android:padding="4dp"
         android:background="#ffffff"
         app:isDeletable="true"
-        app:tagLayoutColor="#0000ff"
+        app:tagLayoutColor="#0066cc"
         app:tagTextSize="8sp"
         app:tagTextColor="#ffffff"
         app:deletableTextSize="8sp"

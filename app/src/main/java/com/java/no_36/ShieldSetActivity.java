@@ -4,10 +4,13 @@ import com.ns.developer.tagview.entity.*;
 import com.ns.developer.tagview.widget.TagCloudLinkView;;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -24,6 +27,7 @@ public class ShieldSetActivity extends AppCompatActivity implements View.OnClick
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shield_set);
+
         TagCloudLinkView view = (TagCloudLinkView) findViewById(R.id.shield_cloud_view);
 
         for (String word : CommonUtils.getScreened_keyword_list())
@@ -91,4 +95,6 @@ public class ShieldSetActivity extends AppCompatActivity implements View.OnClick
         Log.d("shield activity", "onPause");
         super.onPause();
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.java.no_36;
 
+import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,6 +37,7 @@ public class HistoryPage extends AppCompatActivity implements AdapterView.OnItem
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tts_Button = (FloatingActionButton) findViewById(R.id.fab_history);
         tts_Button.setOnClickListener(this);
@@ -45,6 +47,16 @@ public class HistoryPage extends AppCompatActivity implements AdapterView.OnItem
         newsAdapter = new NewsHistoryAdapter(this, arraylistHistorys);
         mlistview.setAdapter(newsAdapter);
         mlistview.setOnItemClickListener(this);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+        }
+        return true;
     }
 
     void gethistory() {

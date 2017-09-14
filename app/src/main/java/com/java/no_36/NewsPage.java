@@ -103,6 +103,7 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tts_Button = (FloatingActionButton) findViewById(R.id.fab);
         tts_Button.setOnClickListener(this);
@@ -136,6 +137,9 @@ public class NewsPage extends AppCompatActivity implements OnClickListener {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                break;
             case R.id.Share:
                 showShare();
                 break;
