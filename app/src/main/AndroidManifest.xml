@@ -128,9 +128,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ShieldPage"
+            android:name=".ShieldSetActivity"
             android:label="@string/title_activity_shield_page"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

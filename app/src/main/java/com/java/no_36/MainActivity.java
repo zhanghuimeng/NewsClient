@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity
             isTextMode = !isTextMode;
             CommonUtils.setTextMode(isTextMode);
         } else if (id == R.id.nav_shield) {
-            Intent intent = new Intent(this, ShieldPage.class);
+            Intent intent = new Intent(this, ShieldSetActivity.class);
             startActivity(intent);
 
         } else if(id == R.id.nav_history) {
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity
         List<String> titles = new ArrayList();
         List<Fragment> fragments = new ArrayList<>();
 
-        titles.add("推荐");
+        titles.add("主页");
         titles.add("分类");
 
         mTabLayout.addTab(mTabLayout.newTab().setText(titles.get(0)));
